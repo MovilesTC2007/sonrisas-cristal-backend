@@ -7,7 +7,16 @@ dependencies = [
     "psycopg[binary]>=3.2",
 ]
 
-[dependency-groups]
-dev = [
-    "pytest>=9.2.0",
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes (unused imports/vars, undefined names, etc.)
+    "I",   # isort (import sorting/grouping)
+    "B",   # flake8-bugbear (likely-bug patterns)
+    "UP",  # pyupgrade (modern Python idioms)
+    "SIM", # flake8-simplify
+    "C4",  # flake8-comprehensions
 ]
