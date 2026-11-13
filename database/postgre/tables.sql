@@ -120,10 +120,12 @@ CREATE TABLE attendance(
     check_out TIMESTAMPTZ,
     status TEXT, -- Attended, Late, Absent, Left Early, etc
     notes TEXT,  -- Justification, observations, permissions, etc
+    registered_by INT NOT NULL,
 
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
     FOREIGN KEY (shift_id) REFERENCES shift(shift_id) ON DELETE RESTRICT,
-    UNIQUE (shift_id, attendance_date)
+    UNIQUE (shift_id, attendance_date),
+    FOREIGN KEY (registered_by) REFERENCES users(user_id) ON DELETE RESTRICT
 );
 
 CREATE TABLE personnel_history(

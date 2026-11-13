@@ -123,8 +123,8 @@ WHERE u.email = 'jorge.salinas@sonrisascristal.com';
 -- day-of-week of attendance_date (Postgres EXTRACT(DOW ...) uses the same
 -- 0=Sun..6=Sat convention as the workday column).
 -- ---------------------------------------------------------------------------
-INSERT INTO attendance (user_id, shift_id, attendance_date, check_in, check_out, status, notes)
-SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes
+INSERT INTO attendance (user_id, shift_id, attendance_date, check_in, check_out, status, notes, registered_by)
+SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes, u.user_id
 FROM users u
 JOIN LATERAL (
     VALUES
@@ -137,7 +137,7 @@ JOIN LATERAL (
 JOIN shift s ON s.user_id = u.user_id AND s.workday = EXTRACT(DOW FROM d.attendance_date)::smallint
 WHERE u.email = 'marta.perez@sonrisascristal.com'
 UNION ALL
-SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes
+SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes, u.user_id
 FROM users u
 JOIN LATERAL (
     VALUES
@@ -147,7 +147,7 @@ JOIN LATERAL (
 JOIN shift s ON s.user_id = u.user_id AND s.workday = EXTRACT(DOW FROM d.attendance_date)::smallint
 WHERE u.email = 'diego.hernandez@sonrisascristal.com'
 UNION ALL
-SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes
+SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes, u.user_id
 FROM users u
 JOIN LATERAL (
     VALUES
