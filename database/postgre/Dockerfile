@@ -8,3 +8,4 @@ FROM postgres:16-alpine
 
 COPY tables.sql /docker-entrypoint-initdb.d/01-tables.sql
 COPY seed.sql /docker-entrypoint-initdb.d/02-seed.sql
+COPY functions.sql /docker-entrypoint-initdb.d/03-functions.sql
