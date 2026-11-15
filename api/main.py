@@ -69,12 +69,15 @@ def health_endpoints():
     try:
         with psycopg.connect(DATABASE_URL, connect_timeout=5) as conn, conn.cursor() as cur:
             cur.execute(
-                "SELECT proname FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'public' AND proname = ANY(%s)",
+                "SELECT proname "
+                "FROM pg_proc p "
+                "JOIN pg_namespace n ON n.oid = p.pronamespace "
+                "WHERE n.nspname = 'public' AND proname = ANY(%s)",
                 (REQUIRED_FUNCTIONS,),
             )
             found = {r[0] for r in cur.fetchall()}
         missing = sorted(set(REQUIRED_FUNCTIONS) - found)
-        if missing: 
+        if missing:
             raise HTTPException(status_code=503, detail=f"missing functions: {missing}")
         return {"status": "ok"}
     except psycopg.Error as e:
