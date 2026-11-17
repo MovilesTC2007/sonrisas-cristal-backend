@@ -10,6 +10,9 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Create .env from .env.example
+        run: cp .env.example .env
 
       - name: Raise the docker compose 
         run: docker compose down -v && docker compose build --no-cache db && docker compose up -d db
