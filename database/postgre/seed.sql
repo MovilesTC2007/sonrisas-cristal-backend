@@ -39,18 +39,18 @@ UNION ALL
 SELECT daycare_id, 'Maternal', 1 FROM daycare WHERE name = 'Sonrisas Cristal - Norte';
 
 -- ---------------------------------------------------------------------------
--- invitation_code
+-- invitation_code (max_uses ya no existe en la tabla)
 -- ---------------------------------------------------------------------------
-INSERT INTO invitation_code (daycare_id, code, role_id, expires_at, max_uses)
-SELECT d.daycare_id, 'ABC123', r.role_id, now() + INTERVAL '30 days', 10
+INSERT INTO invitation_code (daycare_id, code, role_id, expires_at)
+SELECT d.daycare_id, 'ABC123', r.role_id, now() + INTERVAL '30 days'
 FROM daycare d, roles r
 WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'staff'
 UNION ALL
-SELECT d.daycare_id, 'ADM001', r.role_id, now() + INTERVAL '7 days', 1
+SELECT d.daycare_id, 'ADM001', r.role_id, now() + INTERVAL '7 days'
 FROM daycare d, roles r
 WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'director'
 UNION ALL
-SELECT d.daycare_id, 'NORTE1', r.role_id, now() + INTERVAL '30 days', 5
+SELECT d.daycare_id, 'NORTE1', r.role_id, now() + INTERVAL '30 days'
 FROM daycare d, roles r
 WHERE d.name = 'Sonrisas Cristal - Norte' AND r.description = 'staff';
 
@@ -60,7 +60,7 @@ WHERE d.name = 'Sonrisas Cristal - Norte' AND r.description = 'staff';
 -- hashes of any actual password. Replace with real hashes if you need to log
 -- in through the app using this seed.
 -- ---------------------------------------------------------------------------
-INSERT INTO users (daycare_id, name, lastname, email, password_hash, role, position, is_active)
+INSERT INTO users (daycare_id, name, lastname, email, password_hash, role_id, position_id, is_active)
 SELECT d.daycare_id, 'Laura', 'Gómez', 'laura.gomez@sonrisascristal.com', '$2b$12$seedhashplaceholder0000000000000000000000000', r.role_id, p.position_id, TRUE
 FROM daycare d, roles r, positions p
 WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'director' AND p.description = 'director'
@@ -93,25 +93,25 @@ WHERE d.name = 'Sonrisas Cristal - Norte' AND r.description = 'staff' AND p.desc
 -- shift (Mon-Fri, workday 1..5, open-ended — valid_until NULL means "current")
 -- ---------------------------------------------------------------------------
 INSERT INTO shift (area_id, user_id, entry_hour, exit_hour, workday, valid_from, valid_until, is_active)
-SELECT a.area_id, u.user_id, '08:00'::time, '16:00'::time, wd.workday, CURRENT_DATE - INTERVAL '30 days', NULL::date, TRUE
+SELECT a.area_id, u.user_id, '08:00'::time, '16:00'::time, wd.workday, CURRENT_DATE - 30, NULL::date, TRUE
 FROM users u
 JOIN area a ON a.name = 'Lactantes' AND a.daycare_id = u.daycare_id
 CROSS JOIN generate_series(1, 5) AS wd(workday)
 WHERE u.email = 'marta.perez@sonrisascristal.com'
 UNION ALL
-SELECT a.area_id, u.user_id, '08:00'::time, '16:00'::time, wd.workday, CURRENT_DATE - INTERVAL '30 days', NULL::date, TRUE
+SELECT a.area_id, u.user_id, '08:00'::time, '16:00'::time, wd.workday, CURRENT_DATE - 30, NULL::date, TRUE
 FROM users u
 JOIN area a ON a.name = 'Maternal' AND a.daycare_id = u.daycare_id
 CROSS JOIN generate_series(1, 5) AS wd(workday)
 WHERE u.email = 'diego.hernandez@sonrisascristal.com'
 UNION ALL
-SELECT a.area_id, u.user_id, '09:00'::time, '17:00'::time, wd.workday, CURRENT_DATE - INTERVAL '30 days', NULL::date, TRUE
+SELECT a.area_id, u.user_id, '09:00'::time, '17:00'::time, wd.workday, CURRENT_DATE - 30, NULL::date, TRUE
 FROM users u
 JOIN area a ON a.name = 'Preescolar' AND a.daycare_id = u.daycare_id
 CROSS JOIN generate_series(1, 5) AS wd(workday)
 WHERE u.email = 'sofia.ramirez@sonrisascristal.com'
 UNION ALL
-SELECT a.area_id, u.user_id, '07:30'::time, '15:30'::time, wd.workday, CURRENT_DATE - INTERVAL '30 days', NULL::date, TRUE
+SELECT a.area_id, u.user_id, '07:30'::time, '15:30'::time, wd.workday, CURRENT_DATE - 30, NULL::date, TRUE
 FROM users u
 JOIN area a ON a.name = 'Lactantes' AND a.daycare_id = u.daycare_id
 CROSS JOIN generate_series(1, 5) AS wd(workday)
@@ -122,37 +122,38 @@ WHERE u.email = 'jorge.salinas@sonrisascristal.com';
 -- shift_id is resolved by matching the user's shift whose workday equals the
 -- day-of-week of attendance_date (Postgres EXTRACT(DOW ...) uses the same
 -- 0=Sun..6=Sat convention as the workday column).
+-- uuid is now required (NOT NULL UNIQUE); generated per row.
 -- ---------------------------------------------------------------------------
-INSERT INTO attendance (user_id, shift_id, attendance_date, check_in, check_out, status, notes)
-SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes
+INSERT INTO attendance (user_id, shift_id, attendance_date, check_in, check_out, status, notes, registered_by, uuid)
+SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes, u.user_id, gen_random_uuid()::text
 FROM users u
 JOIN LATERAL (
     VALUES
-        (DATE '2026-11-02', TIMESTAMPTZ '2026-11-02 07:58:00-06', TIMESTAMPTZ '2026-11-02 16:05:00-06', 'on_time', NULL),
-        (DATE '2026-11-03', TIMESTAMPTZ '2026-11-03 08:15:00-06', TIMESTAMPTZ '2026-11-03 16:00:00-06', 'late', 'Tráfico'),
-        (DATE '2026-11-04', TIMESTAMPTZ '2026-11-04 07:55:00-06', TIMESTAMPTZ '2026-11-04 16:02:00-06', 'on_time', NULL),
-        (DATE '2026-11-05', NULL, NULL, 'absent', 'Enfermedad, justificada'),
-        (DATE '2026-11-06', TIMESTAMPTZ '2026-11-06 07:57:00-06', TIMESTAMPTZ '2026-11-06 16:01:00-06', 'on_time', NULL)
+        (DATE '2026-11-02', TIMESTAMPTZ '2026-11-02 07:58:00-06', TIMESTAMPTZ '2026-11-02 16:05:00-06', 'Attended'::status_of_attendance, NULL),
+        (DATE '2026-11-03', TIMESTAMPTZ '2026-11-03 08:15:00-06', TIMESTAMPTZ '2026-11-03 16:00:00-06', 'Late'::status_of_attendance, 'Tráfico'),
+        (DATE '2026-11-04', TIMESTAMPTZ '2026-11-04 07:55:00-06', TIMESTAMPTZ '2026-11-04 16:02:00-06', 'Attended'::status_of_attendance, NULL),
+        (DATE '2026-11-05', NULL, NULL, 'Absent'::status_of_attendance, 'Enfermedad, justificada'),
+        (DATE '2026-11-06', TIMESTAMPTZ '2026-11-06 07:57:00-06', TIMESTAMPTZ '2026-11-06 16:01:00-06', 'Attended'::status_of_attendance, NULL)
 ) AS d(attendance_date, check_in, check_out, status, notes) ON TRUE
 JOIN shift s ON s.user_id = u.user_id AND s.workday = EXTRACT(DOW FROM d.attendance_date)::smallint
 WHERE u.email = 'marta.perez@sonrisascristal.com'
 UNION ALL
-SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes
+SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes, u.user_id, gen_random_uuid()::text
 FROM users u
 JOIN LATERAL (
     VALUES
-        (DATE '2026-11-02', TIMESTAMPTZ '2026-11-02 08:00:00-06', TIMESTAMPTZ '2026-11-02 16:00:00-06', 'on_time', NULL),
-        (DATE '2026-11-03', TIMESTAMPTZ '2026-11-03 08:05:00-06', TIMESTAMPTZ '2026-11-03 15:50:00-06', 'late', NULL)
+        (DATE '2026-11-02', TIMESTAMPTZ '2026-11-02 08:00:00-06', TIMESTAMPTZ '2026-11-02 16:00:00-06', 'Attended'::status_of_attendance, NULL),
+        (DATE '2026-11-03', TIMESTAMPTZ '2026-11-03 08:05:00-06', TIMESTAMPTZ '2026-11-03 15:50:00-06', 'Left Early'::status_of_attendance, 'Salida anticipada')
 ) AS d(attendance_date, check_in, check_out, status, notes) ON TRUE
 JOIN shift s ON s.user_id = u.user_id AND s.workday = EXTRACT(DOW FROM d.attendance_date)::smallint
 WHERE u.email = 'diego.hernandez@sonrisascristal.com'
 UNION ALL
-SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes
+SELECT u.user_id, s.shift_id, d.attendance_date, d.check_in, d.check_out, d.status, d.notes, u.user_id, gen_random_uuid()::text
 FROM users u
 JOIN LATERAL (
     VALUES
-        (DATE '2026-11-02', TIMESTAMPTZ '2026-11-02 07:28:00-06', TIMESTAMPTZ '2026-11-02 15:31:00-06', 'on_time', NULL),
-        (DATE '2026-11-03', TIMESTAMPTZ '2026-11-03 07:29:00-06', TIMESTAMPTZ '2026-11-03 15:35:00-06', 'on_time', NULL)
+        (DATE '2026-11-02', TIMESTAMPTZ '2026-11-02 07:28:00-06', TIMESTAMPTZ '2026-11-02 15:31:00-06', 'Attended'::status_of_attendance, NULL),
+        (DATE '2026-11-03', TIMESTAMPTZ '2026-11-03 07:29:00-06', TIMESTAMPTZ '2026-11-03 15:35:00-06', 'Attended'::status_of_attendance, NULL)
 ) AS d(attendance_date, check_in, check_out, status, notes) ON TRUE
 JOIN shift s ON s.user_id = u.user_id AND s.workday = EXTRACT(DOW FROM d.attendance_date)::smallint
 WHERE u.email = 'jorge.salinas@sonrisascristal.com';
@@ -161,43 +162,46 @@ WHERE u.email = 'jorge.salinas@sonrisascristal.com';
 -- requests
 -- ---------------------------------------------------------------------------
 INSERT INTO requests (user_id, type, status, request_date, resolved_at, resolved_by, notes)
-SELECT u.user_id, 'permiso', 'approved', now() - INTERVAL '5 days', now() - INTERVAL '4 days', admin.user_id, 'Permiso médico'
+SELECT u.user_id, 'Sick Leave'::types_of_requests, 'Approved'::status_of_requests,
+       now() - INTERVAL '5 days', now() - INTERVAL '4 days', admin.user_id, 'Permiso médico'
 FROM users u, users admin
 WHERE u.email = 'marta.perez@sonrisascristal.com' AND admin.email = 'laura.gomez@sonrisascristal.com'
 UNION ALL
-SELECT u.user_id, 'cambio_turno', 'pending', now() - INTERVAL '1 day', NULL, NULL, 'Solicita cambiar a turno de Preescolar'
+SELECT u.user_id, 'Personal Leave'::types_of_requests, 'Pending'::status_of_requests,
+       now() - INTERVAL '1 day', NULL, NULL, 'Solicita cambiar a turno de Preescolar'
 FROM users u
 WHERE u.email = 'diego.hernandez@sonrisascristal.com'
 UNION ALL
-SELECT u.user_id, 'vacaciones', 'rejected', now() - INTERVAL '10 days', now() - INTERVAL '9 days', admin.user_id, 'Periodo saturado, se reagenda para el siguiente trimestre'
+SELECT u.user_id, 'Vacation'::types_of_requests, 'Rejected'::status_of_requests,
+       now() - INTERVAL '10 days', now() - INTERVAL '9 days', admin.user_id, 'Periodo saturado, se reagenda para el siguiente trimestre'
 FROM users u, users admin
 WHERE u.email = 'sofia.ramirez@sonrisascristal.com' AND admin.email = 'laura.gomez@sonrisascristal.com';
 
 -- ---------------------------------------------------------------------------
--- personnel_history
+-- personnel_history (previous_value / new_value ya no existen; se pasan a notes)
 -- ---------------------------------------------------------------------------
-INSERT INTO personnel_history (user_id, action, previous_value, new_value, action_date, notes, changed_by)
-SELECT u.user_id, 'Hired', NULL, 'teacher', CURRENT_DATE - INTERVAL '30 days', 'Alta inicial', admin.user_id
+INSERT INTO personnel_history (user_id, action, action_date, notes, changed_by)
+SELECT u.user_id, 'Hired', CURRENT_DATE - 30, 'Alta inicial. Puesto: profesor', admin.user_id
 FROM users u, users admin
 WHERE u.email = 'marta.perez@sonrisascristal.com' AND admin.email = 'laura.gomez@sonrisascristal.com'
 UNION ALL
-SELECT u.user_id, 'Hired', NULL, 'teacher', CURRENT_DATE - INTERVAL '30 days', 'Alta inicial', admin.user_id
+SELECT u.user_id, 'Hired', CURRENT_DATE - 30, 'Alta inicial. Puesto: profesor', admin.user_id
 FROM users u, users admin
 WHERE u.email = 'diego.hernandez@sonrisascristal.com' AND admin.email = 'laura.gomez@sonrisascristal.com'
 UNION ALL
-SELECT u.user_id, 'Hired', NULL, 'assistant', CURRENT_DATE - INTERVAL '30 days', 'Alta inicial', admin.user_id
+SELECT u.user_id, 'Hired', CURRENT_DATE - 30, 'Alta inicial. Puesto: asistente', admin.user_id
 FROM users u, users admin
 WHERE u.email = 'sofia.ramirez@sonrisascristal.com' AND admin.email = 'laura.gomez@sonrisascristal.com'
 UNION ALL
-SELECT u.user_id, 'Hired', NULL, 'assistant', CURRENT_DATE - INTERVAL '60 days', 'Alta inicial', admin.user_id
+SELECT u.user_id, 'Hired', CURRENT_DATE - 60, 'Alta inicial. Puesto: asistente', admin.user_id
 FROM users u, users admin
 WHERE u.email = 'carlos.ibarra@sonrisascristal.com' AND admin.email = 'laura.gomez@sonrisascristal.com'
 UNION ALL
-SELECT u.user_id, 'Terminated', 'active', 'inactive', CURRENT_DATE - INTERVAL '2 days', 'Renuncia voluntaria', admin.user_id
+SELECT u.user_id, 'Terminated', CURRENT_DATE - 2, 'Renuncia voluntaria (activo -> inactivo)', admin.user_id
 FROM users u, users admin
 WHERE u.email = 'carlos.ibarra@sonrisascristal.com' AND admin.email = 'laura.gomez@sonrisascristal.com'
 UNION ALL
-SELECT u.user_id, 'Hired', NULL, 'teacher', CURRENT_DATE - INTERVAL '20 days', 'Alta inicial', admin.user_id
+SELECT u.user_id, 'Hired', CURRENT_DATE - 20, 'Alta inicial. Puesto: profesor', admin.user_id
 FROM users u, users admin
 WHERE u.email = 'jorge.salinas@sonrisascristal.com' AND admin.email = 'patricia.luna@sonrisascristal.com';
 

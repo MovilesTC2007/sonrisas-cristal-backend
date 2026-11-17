@@ -28,7 +28,10 @@ CREATE TABLE daycare (
     daycare_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL,
     address TEXT NOT NULL,
-    tolerance_minutes INT NOT NULL DEFAULT 5
+    tolerance_minutes INT NOT NULL DEFAULT 5,
+    low_delay INT NOT NULL DEFAULT 5,
+    medium_delay INT NOT NULL DEFAULT 15,
+    absence INT NOT NULL DEFAULT 30
 );
 
 CREATE TABLE area(
@@ -46,8 +49,6 @@ CREATE TABLE invitation_code(
     code TEXT NOT NULL UNIQUE CHECK (LENGTH(code) <= 6),
     role_id INT REFERENCES roles(role_id),
     expires_at TIMESTAMP NOT NULL,
-    times_used INT NOT NULL DEFAULT 0,
-    max_uses INT, -- NULL = unlimited uses; otherwise enforce times_used <= max_uses at the app layer
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
     FOREIGN KEY (daycare_id) REFERENCES daycare(daycare_id) ON DELETE RESTRICT
@@ -60,8 +61,8 @@ CREATE TABLE users(
     lastname TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE CHECK (LENGTH(email) < 100),
     password_hash TEXT NOT NULL,
-    role INT REFERENCES roles(role_id), -- Encargado, director, empleado
-    position INT REFERENCES positions(position_id),
+    role_id INT REFERENCES roles(role_id), -- Encargado, director, empleado
+    position_id INT REFERENCES positions(position_id),
     is_active BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -69,11 +70,13 @@ CREATE TABLE users(
     FOREIGN KEY (daycare_id) REFERENCES daycare(daycare_id) ON DELETE RESTRICT
 );
 
+CREATE TYPE types_of_requests AS ENUM ('Vacation', 'Sick Leave', 'Personal Leave'); -- Add more later
+CREATE TYPE status_of_requests AS ENUM ('Pending', 'Approved', 'Rejected'); -- Add more later
 CREATE TABLE requests(
     request_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id INT NOT NULL,
-    type TEXT NOT NULL, -- Vacation, Sick Leave, Personal Leave, etc
-    status TEXT, -- Pending, Approved, Rejected
+    type types_of_requests NOT NULL,
+    status status_of_requests NOT NULL DEFAULT 'Pending',
     request_date TIMESTAMPTZ NOT NULL DEFAULT now(),
     resolved_at TIMESTAMPTZ DEFAULT NULL,
     resolved_by INT, -- who approved/rejected it
@@ -110,6 +113,7 @@ CREATE TABLE shift(
     */
 );
 
+CREATE TYPE status_of_attendance AS ENUM ('Attended', 'Late', 'Absent', 'Left Early');
 CREATE TABLE attendance(
     attendance_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id INT NOT NULL,
@@ -118,20 +122,21 @@ CREATE TABLE attendance(
     attendance_date DATE NOT NULL,
     check_in TIMESTAMPTZ,
     check_out TIMESTAMPTZ,
-    status TEXT, -- Attended, Late, Absent, Left Early, etc
+    status status_of_attendance,
     notes TEXT,  -- Justification, observations, permissions, etc
+    registered_by INT NOT NULL,
+    uuid TEXT NOT NULL UNIQUE,
 
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
     FOREIGN KEY (shift_id) REFERENCES shift(shift_id) ON DELETE RESTRICT,
-    UNIQUE (shift_id, attendance_date)
+    UNIQUE (shift_id, attendance_date),
+    FOREIGN KEY (registered_by) REFERENCES users(user_id) ON DELETE RESTRICT
 );
 
 CREATE TABLE personnel_history(
     personnel_history_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id INT NOT NULL,
     action TEXT NOT NULL, -- Hired, Promoted, Demoted, Terminated, Role changed, Position changed, etc
-    previous_value TEXT, -- free text, e.g. previous role/position name. NULL when action has no prior state (e.g. "hired")
-    new_value TEXT, -- free text, e.g. new role/position name
     action_date DATE NOT NULL,
     notes TEXT,  -- Justification, observations, permissions, etc
     changed_by INT NOT NULL,
