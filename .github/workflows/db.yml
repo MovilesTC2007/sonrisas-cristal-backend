@@ -1,0 +1,27 @@
+name: db
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Create .env from .env.example
+        run: cp .env.example .env
+
+      - name: Raise the docker compose 
+        run: docker compose down -v && docker compose build --no-cache db && docker compose up -d db
+
+      - name: Test the database connection
+        run: |
+          sleep 3
+          docker compose exec -T db pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" | tee -a $GITHUB_STEP_SUMMARY
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v
