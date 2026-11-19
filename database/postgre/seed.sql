@@ -60,35 +60,59 @@ WHERE d.name = 'Sonrisas Cristal - Norte' AND r.description = 'staff';
 -- hashes of any actual password. Replace with real hashes if you need to log
 -- in through the app using this seed.
 -- ---------------------------------------------------------------------------
-INSERT INTO users (daycare_id, name, lastname, email, password_hash, role_id, position_id, is_active)
-SELECT d.daycare_id, 'Laura', 'Gómez', 'laura.gomez@sonrisascristal.com', '$2b$12$seedhashplaceholder0000000000000000000000000', r.role_id, p.position_id, TRUE
-FROM daycare d, roles r, positions p
-WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'director' AND p.description = 'director'
-UNION ALL
-SELECT d.daycare_id, 'Marta', 'Pérez', 'marta.perez@sonrisascristal.com', '$2b$12$seedhashplaceholder0000000000000000000000001', r.role_id, p.position_id, TRUE
-FROM daycare d, roles r, positions p
-WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'staff' AND p.description = 'profesor'
-UNION ALL
-SELECT d.daycare_id, 'Diego', 'Hernández', 'diego.hernandez@sonrisascristal.com', '$2b$12$seedhashplaceholder0000000000000000000000002', r.role_id, p.position_id, TRUE
-FROM daycare d, roles r, positions p
-WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'staff' AND p.description = 'profesor'
-UNION ALL
-SELECT d.daycare_id, 'Sofía', 'Ramírez', 'sofia.ramirez@sonrisascristal.com', '$2b$12$seedhashplaceholder0000000000000000000000003', r.role_id, p.position_id, TRUE
-FROM daycare d, roles r, positions p
-WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'staff' AND p.description = 'asistente'
-UNION ALL
-SELECT d.daycare_id, 'Carlos', 'Ibarra', 'carlos.ibarra@sonrisascristal.com', '$2b$12$seedhashplaceholder0000000000000000000000004', r.role_id, p.position_id, FALSE
-FROM daycare d, roles r, positions p
-WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'staff' AND p.description = 'asistente'
-UNION ALL
-SELECT d.daycare_id, 'Patricia', 'Luna', 'patricia.luna@sonrisascristal.com', '$2b$12$seedhashplaceholder0000000000000000000000005', r.role_id, p.position_id, TRUE
-FROM daycare d, roles r, positions p
-WHERE d.name = 'Sonrisas Cristal - Norte' AND r.description = 'director' AND p.description = 'director'
-UNION ALL
-SELECT d.daycare_id, 'Jorge', 'Salinas', 'jorge.salinas@sonrisascristal.com', '$2b$12$seedhashplaceholder0000000000000000000000006', r.role_id, p.position_id, TRUE
-FROM daycare d, roles r, positions p
-WHERE d.name = 'Sonrisas Cristal - Norte' AND r.description = 'staff' AND p.description = 'profesor';
+-- Seed users through add_user() so hashes are properly peppered + salted.
+-- All seed users share the dev password 'Test1234!'. Development only.
+-- Requires: schema -> functions.sql -> this file (in that order).
 
+SELECT add_user(
+    (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Apodaca'),
+    'Laura', 'Gómez', 'Test1234!', 'laura.gomez@sonrisascristal.com',
+    (SELECT role_id FROM roles WHERE description = 'director'),
+    (SELECT position_id FROM positions WHERE description = 'director'),
+    TRUE);
+
+SELECT add_user(
+    (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Apodaca'),
+    'Marta', 'Pérez', 'Test1234!', 'marta.perez@sonrisascristal.com',
+    (SELECT role_id FROM roles WHERE description = 'staff'),
+    (SELECT position_id FROM positions WHERE description = 'profesor'),
+    TRUE);
+
+SELECT add_user(
+    (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Apodaca'),
+    'Diego', 'Hernández', 'Test1234!', 'diego.hernandez@sonrisascristal.com',
+    (SELECT role_id FROM roles WHERE description = 'staff'),
+    (SELECT position_id FROM positions WHERE description = 'profesor'),
+    TRUE);
+
+SELECT add_user(
+    (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Apodaca'),
+    'Sofía', 'Ramírez', 'Test1234!', 'sofia.ramirez@sonrisascristal.com',
+    (SELECT role_id FROM roles WHERE description = 'staff'),
+    (SELECT position_id FROM positions WHERE description = 'asistente'),
+    TRUE);
+
+SELECT add_user(
+    (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Apodaca'),
+    'Carlos', 'Ibarra', 'Test1234!', 'carlos.ibarra@sonrisascristal.com',
+    (SELECT role_id FROM roles WHERE description = 'staff'),
+    (SELECT position_id FROM positions WHERE description = 'asistente'),
+    FALSE);
+
+SELECT add_user(
+    (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Norte'),
+    'Patricia', 'Luna', 'Test1234!', 'patricia.luna@sonrisascristal.com',
+    (SELECT role_id FROM roles WHERE description = 'director'),
+    (SELECT position_id FROM positions WHERE description = 'director'),
+    TRUE);
+
+SELECT add_user(
+    (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Norte'),
+    'Jorge', 'Salinas', 'Test1234!', 'jorge.salinas@sonrisascristal.com',
+    (SELECT role_id FROM roles WHERE description = 'staff'),
+    (SELECT position_id FROM positions WHERE description = 'profesor'),
+    TRUE);
+    
 -- ---------------------------------------------------------------------------
 -- shift (Mon-Fri, workday 1..5, open-ended — valid_until NULL means "current")
 -- ---------------------------------------------------------------------------

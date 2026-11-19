@@ -24,6 +24,69 @@ def health_db():
         raise HTTPException(status_code=503, detail=f"database unreachable: {e}") from e
 
 
+@app.get("/auth-check")
+def auth_check():
+    password = "password123"
+    wrong_password = "password121"
+    mail = "authtest@gmail.com"
+
+    try:
+        with psycopg.connect(DATABASE_URL, connect_timeout=5) as conn, conn.cursor() as cur:
+            # create a new user
+            cur.execute(
+                "SELECT add_user(%s, %s, %s, %s, %s, %s, %s, %s)",
+                (1, "Authentication", "Test", password, mail, 1, 1, True),
+            )
+            new_id = cur.fetchone()[0]
+
+            # see the stored hash (expect length 60)
+            cur.execute("SELECT password_hash FROM users WHERE user_id = %s", (new_id,))
+            condimented_password = cur.fetchone()[0]
+
+            # log in with right and wrong password
+            cur.execute("SELECT authenticate(%s, %s)", (mail, password))
+            ok_id = cur.fetchone()[0]
+            cur.execute("SELECT authenticate(%s, %s)", (mail, wrong_password))
+            bad_id = cur.fetchone()[0]
+
+            # clean the test
+            cur.execute("DELETE FROM users WHERE user_id = %s", (new_id,))
+            conn.commit()
+
+    except (psycopg.Error, TypeError) as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"check failed: {type(e).__name__}",
+        ) from e
+
+    passed = (ok_id == new_id and bad_id is None)
+
+    # bcrypt layout: $2a$ (4) | cost 12 (2) | $ (1) | salt (22) | hash (31) = 60
+    return {
+        "passed": passed,
+        "created_user_id": new_id,
+        "login_correct_password": ok_id == new_id,
+        "login_wrong_password_rejected": bad_id is None,
+        "hash_prefix": condimented_password[:7], # expect "$2a$12$"
+        "hash_length": len(condimented_password), # expect 60
+        "password_not_stored_plain": password not in condimented_password,
+    }
+
+
+@app.get("/hash-list")
+def hash_list():
+    try:
+        with psycopg.connect(DATABASE_URL, connect_timeout=5) as conn, conn.cursor() as cur:
+            cur.execute("SELECT email, password_hash FROM users ORDER BY user_id")
+            rows = cur.fetchall()
+    except psycopg.Error as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"check failed: {type(e).__name__}: {e}",
+        ) from e
+    return [{"email": email, "hash": h} for email, h in rows]
+
+
 REQUIRED_FUNCTIONS = [
     "get_roles_description",
     "get_position_description",
