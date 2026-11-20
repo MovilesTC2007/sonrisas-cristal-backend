@@ -149,21 +149,26 @@ LANGUAGE sql AS $$
     RETURNING user_id;
 $$;
 
--- authenticate the user by its email and password, returns user id if the data is correct, null if its not
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+DROP FUNCTION IF EXISTS add_user(INT, TEXT, TEXT, TEXT, INT, INT, BOOLEAN);
+
+-- authenticate by email and password, returns user id or NULL
 CREATE OR REPLACE FUNCTION authenticate(p_email TEXT, p_password TEXT)
 RETURNS INT
 LANGUAGE sql
 STABLE
 AS $$
-    SELECT u.user_id FROM users u WHERE u.email = p_email AND u.is_active = TRUE AND u.password_hash = crypt(p_password, u.password_hash);
+    SELECT u.user_id FROM users u
+    WHERE u.email = p_email AND u.is_active = TRUE AND u.password_hash = p_password;
 $$;
 
--- create a new user and attributes
-CREATE OR REPLACE FUNCTION add_user(p_daycare_id INT, p_name TEXT, p_lastname TEXT, p_email TEXT, p_role_id INT, p_position_id INT, p_is_active BOOLEAN)
+-- create a new user (password stored as given)
+CREATE OR REPLACE FUNCTION add_user(
+    p_daycare_id INT, p_name TEXT, p_lastname TEXT, p_email TEXT, p_password TEXT,
+    p_role_id INT, p_position_id INT, p_is_active BOOLEAN)
 RETURNS INT
 LANGUAGE sql AS $$
-    INSERT INTO users (daycare_id, name, lastname, email, role_id, position_id, is_active) VALUES (p_daycare_id, p_name, p_lastname, p_email, p_role_id, p_position_id, p_is_active)
+    INSERT INTO users (daycare_id, name, lastname, email, password_hash, role_id, position_id, is_active)
+    VALUES (p_daycare_id, p_name, p_lastname, p_email, p_password, p_role_id, p_position_id, p_is_active)
     RETURNING user_id;
 $$;
 

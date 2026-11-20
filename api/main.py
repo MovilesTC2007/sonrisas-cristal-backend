@@ -80,6 +80,7 @@ class UserIn(BaseModel):
     daycare_id: int
     name: str = Field(min_length=1, max_length=100)
     lastname: str = Field(min_length=1, max_length=100)
+    password: str
     email: str = Field(max_length=99)
     role_id: int | None = None
     position_id: int | None = None
@@ -352,8 +353,7 @@ def get_user(user_id: int):
 
 @app.post("/users", tags=["users"], status_code=201)
 def create_user(b: UserIn):
-    # NOTE: add_user has no password parameter; see how passwords get set.
-    return one("add_user", b.daycare_id, b.name, b.lastname, b.email, b.role_id, b.position_id, b.is_active)
+    return one("add_user", b.daycare_id, b.name, b.lastname, b.email, b.password, b.role_id, b.position_id, b.is_active)
 
 
 @app.put("/users/{user_id}", tags=["users"])
