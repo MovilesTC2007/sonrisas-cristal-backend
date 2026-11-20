@@ -353,7 +353,7 @@ def get_user(user_id: int):
 
 @app.post("/users", tags=["users"], status_code=201)
 def create_user(b: UserIn):
-    return one("add_user", b.daycare_id, b.name, b.lastname, b.email, b.password, b.role_id, b.position_id, b.is_active)
+    return one("add_user", b.daycare_id, b.name, b.lastname, b.password, b.email, b.role_id, b.position_id, b.is_active)
 
 
 @app.put("/users/{user_id}", tags=["users"])
