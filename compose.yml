@@ -2,6 +2,7 @@ services:
   db:
     build: ./database/postgre
     env_file: .env
+    command: ["postgres", "-c", "app.password_pepper=${PASSWORD_PEPPER}"]
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
