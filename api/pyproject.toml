@@ -7,11 +7,6 @@ dependencies = [
     "psycopg[binary]>=3.2",
 ]
 
-[dependency-groups]
-dev = [
-    "pytest>=8.0",
-]
-
 [tool.ruff]
 line-length = 100
 
