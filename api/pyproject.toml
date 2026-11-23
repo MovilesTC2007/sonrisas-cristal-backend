@@ -5,10 +5,11 @@ requires-python = ">=3.11"
 dependencies = [
     "fastapi[standard]>=0.162.0",
     "psycopg[binary]>=3.2",
+    "python-jose[cryptography]>=3.5.0",
 ]
 
 [tool.ruff]
-line-length = 100
+line-length = 145
 
 [tool.ruff.lint]
 select = [

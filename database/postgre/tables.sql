@@ -14,18 +14,22 @@ DROP TABLE IF EXISTS daycare CASCADE;
 DROP TABLE IF EXISTS positions CASCADE;
 DROP TABLE IF EXISTS roles CASCADE;
 
+
+-- For security reasons we decided to use UUIDs instead of INT and in the version v4 
+-- because they are generated randomly and are not sequential, making it harder to guess the next value.
+
 CREATE TABLE roles( -- Encargado, director, empleado, which is the hierarchy in the app permissions
-    role_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    role_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     description TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE positions( -- Exact charge for the person
-    position_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    position_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     description TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE daycare (
-    daycare_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    daycare_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     address TEXT NOT NULL,
     tolerance_minutes INT NOT NULL DEFAULT 5,
@@ -35,8 +39,8 @@ CREATE TABLE daycare (
 );
 
 CREATE TABLE area(
-    area_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    daycare_id INT NOT NULL,
+    area_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    daycare_id uuid NOT NULL,
     name TEXT NOT NULL,
     minimum_active_staff INT NOT NULL DEFAULT 0,
 
@@ -44,10 +48,14 @@ CREATE TABLE area(
 );
 
 CREATE TABLE invitation_code(
-    code_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    daycare_id INT NOT NULL,
+    code_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    daycare_id uuid NOT NULL,
     code TEXT NOT NULL UNIQUE CHECK (LENGTH(code) <= 6),
-    role_id INT REFERENCES roles(role_id),
+    role_id uuid REFERENCES roles(role_id),
+    position_id uuid REFERENCES positions(position_id),
+    name TEXT NOT NULL,
+    lastname TEXT NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT FALSE,
     expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
@@ -55,14 +63,14 @@ CREATE TABLE invitation_code(
 ); 
 
 CREATE TABLE users(
-    user_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    daycare_id INT NOT NULL,
+    user_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    daycare_id uuid NOT NULL,
     name TEXT NOT NULL,
     lastname TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE CHECK (LENGTH(email) < 100),
     password_hash TEXT NOT NULL,
-    role_id INT REFERENCES roles(role_id), -- Encargado, director, empleado
-    position_id INT REFERENCES positions(position_id),
+    role_id uuid REFERENCES roles(role_id), -- Encargado, director, empleado
+    position_id uuid REFERENCES positions(position_id),
     is_active BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -73,13 +81,13 @@ CREATE TABLE users(
 CREATE TYPE types_of_requests AS ENUM ('Vacation', 'Sick Leave', 'Personal Leave'); -- Add more later
 CREATE TYPE status_of_requests AS ENUM ('Pending', 'Approved', 'Rejected'); -- Add more later
 CREATE TABLE requests(
-    request_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id INT NOT NULL,
+    request_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL,
     type types_of_requests NOT NULL,
     status status_of_requests NOT NULL DEFAULT 'Pending',
     request_date TIMESTAMPTZ NOT NULL DEFAULT now(),
     resolved_at TIMESTAMPTZ DEFAULT NULL,
-    resolved_by INT, -- who approved/rejected it
+    resolved_by uuid, -- who approved/rejected it
     notes TEXT,  -- Justification, observations, permissions, etc
 
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
@@ -87,16 +95,16 @@ CREATE TABLE requests(
 );
 
 CREATE TABLE shift(
-    shift_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    area_id INT NOT NULL, -- Area where the user has to be
-    user_id INT NOT NULL,
+    shift_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    area_id uuid NOT NULL, -- Area where the user has to be
+    user_id uuid NOT NULL,
     entry_hour TIME NOT NULL,
     exit_hour TIME NOT NULL,
     workday SMALLINT NOT NULL CHECK (workday BETWEEN 0 AND 6), --0=Dom, 1=Lun... 6=Sab. One registry per day that each person has to work
     valid_from DATE,
     valid_until DATE,
     is_active BOOLEAN DEFAULT FALSE,
-    request_id INT, -- approved rotation/shift-change request that produced this shift version, if any
+    request_id uuid, -- approved rotation/shift-change request that produced this shift version, if any
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
@@ -115,16 +123,16 @@ CREATE TABLE shift(
 
 CREATE TYPE status_of_attendance AS ENUM ('Attended', 'Late', 'Absent', 'Left Early');
 CREATE TABLE attendance(
-    attendance_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id INT NOT NULL,
-    shift_id INT NOT NULL,
+    attendance_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL,
+    shift_id uuid NOT NULL,
 
     attendance_date DATE NOT NULL,
     check_in TIMESTAMPTZ,
     check_out TIMESTAMPTZ,
     status status_of_attendance,
     notes TEXT,  -- Justification, observations, permissions, etc
-    registered_by INT NOT NULL,
+    registered_by uuid NOT NULL,
     uuid TEXT NOT NULL UNIQUE,
 
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
@@ -134,12 +142,12 @@ CREATE TABLE attendance(
 );
 
 CREATE TABLE personnel_history(
-    personnel_history_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id INT NOT NULL,
+    personnel_history_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL,
     action TEXT NOT NULL, -- Hired, Promoted, Demoted, Terminated, Role changed, Position changed, etc
     action_date DATE NOT NULL,
     notes TEXT,  -- Justification, observations, permissions, etc
-    changed_by INT NOT NULL,
+    changed_by uuid NOT NULL,
 
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
     FOREIGN KEY (changed_by) REFERENCES users(user_id) ON DELETE RESTRICT

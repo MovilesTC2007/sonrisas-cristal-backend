@@ -2,6 +2,7 @@ services:
   db:
     build: ./database/postgre
     env_file: .env
+    command: ["postgres", "-c", "app.password_pepper=${PASSWORD_PEPPER}"]
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -21,6 +22,25 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    profiles: ["security"] # starts when its called
+    depends_on:
+      - api
+    volumes:
+      - ./zap-reports:/zap/wrk:rw # reports end up in ./zap-reports
+    command: >
+      zap-api-scan.py
+      -t http://api:8000/openapi.json
+      -f openapi
+      -r report.html
+
+    # baseline (passive) or full (active attacks) zap-full-scan.py
+    # api-scan active attacks on every endpoint in the spec
+    # docker compose --profile security run --rm zap
+      
+
 
 volumes:
   postgres_data:
