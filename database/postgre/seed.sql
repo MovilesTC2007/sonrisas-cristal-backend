@@ -39,20 +39,23 @@ UNION ALL
 SELECT daycare_id, 'Maternal', 1 FROM daycare WHERE name = 'Sonrisas Cristal - Norte';
 
 -- ---------------------------------------------------------------------------
--- invitation_code (max_uses ya no existe en la tabla)
+-- invitation codes
 -- ---------------------------------------------------------------------------
-INSERT INTO invitation_code (daycare_id, code, role_id, expires_at)
-SELECT d.daycare_id, 'ABC123', r.role_id, now() + INTERVAL '30 days'
-FROM daycare d, roles r
-WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'staff'
+-- name/lastname/position_id/is_active are the predefined fields the invitee
+-- inherits on redemption (see redeem_invitation_code); the invitee only ever
+-- supplies their own email/password.
+INSERT INTO invitation_code (daycare_id, code, role_id, position_id, name, lastname, is_active, expires_at)
+SELECT d.daycare_id, 'ABC123', r.role_id, p.position_id, 'Lucía', 'Torres', TRUE, now() + INTERVAL '30 days'
+FROM daycare d, roles r, positions p
+WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'staff' AND p.description = 'profesor'
 UNION ALL
-SELECT d.daycare_id, 'ADM001', r.role_id, now() + INTERVAL '7 days'
-FROM daycare d, roles r
-WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'director'
+SELECT d.daycare_id, 'ADM001', r.role_id, p.position_id, 'Andrés', 'Mendoza', TRUE, now() + INTERVAL '7 days'
+FROM daycare d, roles r, positions p
+WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'director' AND p.description = 'director'
 UNION ALL
-SELECT d.daycare_id, 'NORTE1', r.role_id, now() + INTERVAL '30 days'
-FROM daycare d, roles r
-WHERE d.name = 'Sonrisas Cristal - Norte' AND r.description = 'staff';
+SELECT d.daycare_id, 'NORTE1', r.role_id, p.position_id, 'Valeria', 'Cruz', TRUE, now() + INTERVAL '30 days'
+FROM daycare d, roles r, positions p
+WHERE d.name = 'Sonrisas Cristal - Norte' AND r.description = 'staff' AND p.description = 'asistente';
 
 -- ---------------------------------------------------------------------------
 -- users
