@@ -1,6 +1,6 @@
 -- POSTGRESQL
 -- This are the Functions and Procedures divided by tables
-
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- ROLES
 
@@ -165,7 +165,6 @@ LANGUAGE sql AS $$
     RETURNING user_id;
 $$;
 
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- authenticate by email and password, returns user id or NULL
 CREATE OR REPLACE FUNCTION authenticate(p_email TEXT, p_password TEXT)
