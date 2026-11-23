@@ -19,20 +19,20 @@ def call(fn: str, *args) -> list[dict]:
         ) as conn, conn.cursor() as cur:
             cur.execute(f"SELECT * FROM {fn}({placeholders})", args)
             rows = cur.fetchall()
-    except pgerr.UniqueViolation:
+    except pgerr.UniqueViolation as e:
         raise HTTPException(status_code=409, detail="Registro duplicado")
     except (
         pgerr.ForeignKeyViolation,
         pgerr.CheckViolation,
         pgerr.NotNullViolation,
         pgerr.InvalidTextRepresentation,
-    ):
+    ) as e:
         raise HTTPException(status_code=400, detail="Datos inválidos")
     except pgerr.RaiseException as e:
         raise HTTPException(status_code=400, detail=e.diag.message_primary or "Solicitud rechazada")
-    except psycopg.OperationalError:
+    except psycopg.OperationalError as e:
         raise HTTPException(status_code=503, detail="Base de datos no disponible")
-    except psycopg.Error:
+    except psycopg.Error as e:
         raise HTTPException(status_code=500, detail="Error interno")
     return [{k: v for k, v in r.items() if k not in SECRET_FIELDS} for r in rows]
 
