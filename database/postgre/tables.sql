@@ -52,6 +52,10 @@ CREATE TABLE invitation_code(
     daycare_id uuid NOT NULL,
     code TEXT NOT NULL UNIQUE CHECK (LENGTH(code) <= 6),
     role_id uuid REFERENCES roles(role_id),
+    position_id uuid REFERENCES positions(position_id),
+    name TEXT NOT NULL,
+    lastname TEXT NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT FALSE,
     expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 

@@ -97,8 +97,11 @@ $$;
 
 -- INVITATION CODE
 
--- create a new invitation code by the daycare ID, role ID and expiration date, generates a random 6 length code and returns it
-CREATE OR REPLACE FUNCTION generate_invitation_code(p_daycare_id UUID, p_role_id UUID, p_expires_at TIMESTAMP)
+-- create a new invitation code for a predefined name/lastname/role/position/is_active, generates a random 6 length code and returns it
+CREATE OR REPLACE FUNCTION generate_invitation_code(
+    p_daycare_id UUID, p_role_id UUID, p_position_id UUID,
+    p_name TEXT, p_lastname TEXT, p_is_active BOOLEAN, p_expires_at TIMESTAMP
+)
 RETURNS TEXT
 LANGUAGE plpgsql AS $$
 DECLARE
@@ -111,7 +114,8 @@ BEGIN
             v_code := v_code || substr(v_alphabet, 1 + floor(random() * length(v_alphabet))::INT, 1);
         END LOOP;
 
-        INSERT INTO invitation_code (daycare_id, role_id, expires_at, code) VALUES (p_daycare_id, p_role_id, p_expires_at, v_code)
+        INSERT INTO invitation_code (daycare_id, role_id, position_id, name, lastname, is_active, expires_at, code)
+        VALUES (p_daycare_id, p_role_id, p_position_id, p_name, p_lastname, p_is_active, p_expires_at, v_code)
         ON CONFLICT (code) DO NOTHING;
 
         IF FOUND THEN
@@ -123,12 +127,24 @@ BEGIN
 END;
 $$;
 
--- redeem an invitation code comparing with some existent one, returns no rows if there no coincidences, otherwise returns the daycare ID and role ID.
-CREATE OR REPLACE FUNCTION redeem_invitation_code(p_code TEXT)
-RETURNS TABLE (daycare_id UUID, role_id UUID)
+-- redeem an invitation code: consumes it and creates the user from the predefined fields stored on
+-- the invitation plus the email/password supplied by the person redeeming it. Returns no rows if the
+-- code does not exist or has expired, otherwise returns the new user ID.
+CREATE OR REPLACE FUNCTION redeem_invitation_code(p_code TEXT, p_email TEXT, p_password TEXT)
+RETURNS UUID
 LANGUAGE sql AS $$
-    DELETE FROM invitation_code ic WHERE ic.code = upper(p_code) AND ic.expires_at > now()
-    RETURNING ic.daycare_id, ic.role_id;
+    WITH invitation AS (
+        DELETE FROM invitation_code ic
+        WHERE ic.code = upper(p_code) AND ic.expires_at > now()
+        RETURNING ic.daycare_id, ic.role_id, ic.position_id, ic.name, ic.lastname, ic.is_active
+    )
+    INSERT INTO users (daycare_id, name, lastname, password_hash, email, role_id, position_id, is_active)
+    SELECT
+        invitation.daycare_id, invitation.name, invitation.lastname,
+        crypt(encode(hmac(p_password, current_setting('app.password_pepper'), 'sha256'), 'base64'), gen_salt('bf', 12)),
+        p_email, invitation.role_id, invitation.position_id, invitation.is_active
+    FROM invitation
+    RETURNING user_id;
 $$;
 
 
