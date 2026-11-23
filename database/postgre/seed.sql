@@ -66,13 +66,6 @@ WHERE d.name = 'Sonrisas Cristal - Norte' AND r.description = 'staff';
 
 SELECT add_user(
     (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Apodaca'),
-    'Laura', 'Gómez', 'Test1234!', 'laura.gomez@sonrisascristal.com',
-    (SELECT role_id FROM roles WHERE description = 'director'),
-    (SELECT position_id FROM positions WHERE description = 'director'),
-    TRUE);
-
-SELECT add_user(
-    (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Apodaca'),
     'Marta', 'Pérez', 'Test1234!', 'marta.perez@sonrisascristal.com',
     (SELECT role_id FROM roles WHERE description = 'staff'),
     (SELECT position_id FROM positions WHERE description = 'profesor'),
@@ -102,8 +95,8 @@ SELECT add_user(
 SELECT add_user(
     (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Norte'),
     'Patricia', 'Luna', 'Test1234!', 'patricia.luna@sonrisascristal.com',
-    (SELECT role_id FROM roles WHERE description = 'director'),
-    (SELECT position_id FROM positions WHERE description = 'director'),
+    (SELECT role_id FROM roles WHERE description = 'encargado'),
+    (SELECT position_id FROM positions WHERE description = 'encargado'),
     TRUE);
 
 SELECT add_user(
