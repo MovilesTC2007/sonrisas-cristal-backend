@@ -15,6 +15,7 @@ services:
 
   api:
     build: ./api
+    env_file: .env
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     ports:
@@ -40,7 +41,15 @@ services:
     # api-scan active attacks on every endpoint in the spec
     # docker compose --profile security run --rm zap
       
-
+  nginx-tls:
+    image: nginx:1.27-alpine
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./nginx/conf:/etc/nginx/conf.d:ro
+    depends_on:
+      - api
 
 volumes:
   postgres_data:
