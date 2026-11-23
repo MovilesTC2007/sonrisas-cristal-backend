@@ -1,4 +1,4 @@
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from typing import Annotated
 from uuid import UUID
 
@@ -48,7 +48,7 @@ def daycare_shifts_on_day(daycare_id: UUID, day: Annotated[date, Query(alias="da
 
 @router.get("/{daycare_id}/shifts/at")
 def daycare_shifts_at(daycare_id: UUID, at: datetime | None = None):
-    return many("get_users_in_shift_by_daycare", at or datetime.now(datetime.UTC), daycare_id)
+    return many("get_users_in_shift_by_daycare", at or datetime.now(UTC), daycare_id)
 
 
 @router.get("/{daycare_id}/attendance")
@@ -59,5 +59,5 @@ def daycare_attendance_on_day(daycare_id: UUID, day: Annotated[date, Query(alias
 @router.get("/{daycare_id}/attendance/current")
 def daycare_attendance_current(daycare_id: UUID, at: datetime | None = None):
     return many(
-        "get_attendance_in_daycare_by_current_shift", daycare_id, at or datetime.now(datetime.UTC)
+        "get_attendance_in_daycare_by_current_shift", daycare_id, at or datetime.now(UTC)
     )

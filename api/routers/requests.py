@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -18,6 +18,6 @@ def get_request(request_id: UUID):
 @router.post("", status_code=201)
 def create_request(b: RequestIn):
     return one(
-        "add_request", b.user_id, b.type, b.status, b.request_date or datetime.now(timezone.utc),
+        "add_request", b.user_id, b.type, b.status, b.request_date or datetime.now(UTC),
         b.resolved_at, b.resolved_by, b.notes,
     )
