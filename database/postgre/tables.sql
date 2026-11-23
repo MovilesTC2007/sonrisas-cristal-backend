@@ -19,17 +19,17 @@ DROP TABLE IF EXISTS roles CASCADE;
 -- because they are generated randomly and are not sequential, making it harder to guess the next value.
 
 CREATE TABLE roles( -- Encargado, director, empleado, which is the hierarchy in the app permissions
-    role_id uuid PRIMARY KEY gen_random_uuid(),
+    role_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     description TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE positions( -- Exact charge for the person
-    position_id uuid PRIMARY KEY gen_random_uuid(),
+    position_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     description TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE daycare (
-    daycare_id uuid PRIMARY KEY gen_random_uuid(),
+    daycare_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     address TEXT NOT NULL,
     tolerance_minutes INT NOT NULL DEFAULT 5,
@@ -39,7 +39,7 @@ CREATE TABLE daycare (
 );
 
 CREATE TABLE area(
-    area_id uuid PRIMARY KEY gen_random_uuid(),
+    area_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     daycare_id uuid NOT NULL,
     name TEXT NOT NULL,
     minimum_active_staff INT NOT NULL DEFAULT 0,
@@ -48,7 +48,7 @@ CREATE TABLE area(
 );
 
 CREATE TABLE invitation_code(
-    code_id uuid PRIMARY KEY gen_random_uuid(),
+    code_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     daycare_id uuid NOT NULL,
     code TEXT NOT NULL UNIQUE CHECK (LENGTH(code) <= 6),
     role_id uuid REFERENCES roles(role_id),
@@ -59,7 +59,7 @@ CREATE TABLE invitation_code(
 ); 
 
 CREATE TABLE users(
-    user_id uuid PRIMARY KEY gen_random_uuid(),
+    user_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     daycare_id uuid NOT NULL,
     name TEXT NOT NULL,
     lastname TEXT NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE users(
 CREATE TYPE types_of_requests AS ENUM ('Vacation', 'Sick Leave', 'Personal Leave'); -- Add more later
 CREATE TYPE status_of_requests AS ENUM ('Pending', 'Approved', 'Rejected'); -- Add more later
 CREATE TABLE requests(
-    request_id uuid PRIMARY KEY gen_random_uuid(),
+    request_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid NOT NULL,
     type types_of_requests NOT NULL,
     status status_of_requests NOT NULL DEFAULT 'Pending',
@@ -91,7 +91,7 @@ CREATE TABLE requests(
 );
 
 CREATE TABLE shift(
-    shift_id uuid PRIMARY KEY gen_random_uuid(),
+    shift_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     area_id uuid NOT NULL, -- Area where the user has to be
     user_id uuid NOT NULL,
     entry_hour TIME NOT NULL,
@@ -119,7 +119,7 @@ CREATE TABLE shift(
 
 CREATE TYPE status_of_attendance AS ENUM ('Attended', 'Late', 'Absent', 'Left Early');
 CREATE TABLE attendance(
-    attendance_id uuid PRIMARY KEY gen_random_uuid(),
+    attendance_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid NOT NULL,
     shift_id uuid NOT NULL,
 
@@ -138,7 +138,7 @@ CREATE TABLE attendance(
 );
 
 CREATE TABLE personnel_history(
-    personnel_history_id uuid PRIMARY KEY gen_random_uuid(),
+    personnel_history_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid NOT NULL,
     action TEXT NOT NULL, -- Hired, Promoted, Demoted, Terminated, Role changed, Position changed, etc
     action_date DATE NOT NULL,
