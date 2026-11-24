@@ -3,10 +3,16 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 
 from db import many, one
-from schemas import UserIn
+from schemas import UserIn, UserOut
 from security import get_current_user
 
 router = APIRouter(prefix="/users", tags=["users"], dependencies=[Depends(get_current_user)])
+
+
+@router.get("/me", response_model=UserOut)
+def get_me(user_id: UUID = Depends(get_current_user)):
+    user = one("get_user_by_id", user_id)
+    return {**user, "user_id": user_id}
 
 
 @router.get("/{user_id}")
