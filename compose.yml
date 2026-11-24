@@ -51,5 +51,13 @@ services:
     depends_on:
       - api
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: >
+      tunnel --no-autoupdate --url https://nginx-tls:443
+      --origin-server-name localhost --no-tls-verify
+    depends_on:
+      - nginx-tls
+
 volumes:
   postgres_data:

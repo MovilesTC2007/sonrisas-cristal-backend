@@ -19,6 +19,22 @@ class LoginIn(BaseModel):
     password: str = Field(min_length=1, max_length=200)
 
 
+class UserOut(BaseModel):
+    user_id: UUID
+    daycare_id: UUID
+    name: str
+    lastname: str
+    email: str
+    role_id: UUID | None = None
+    position_id: UUID | None = None
+    is_active: bool
+    updated_at: datetime
+
+
+class LoginOut(Token):
+    user: UserOut
+
+
 class RedeemIn(BaseModel):
     code: str = Field(min_length=1, max_length=6)
     email: str = Field(max_length=99)

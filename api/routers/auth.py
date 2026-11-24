@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 from fastapi import APIRouter, Depends
 
 from db import one
-from schemas import InvitationIn, LoginIn, RedeemIn, Token
+from schemas import InvitationIn, LoginIn, LoginOut, RedeemIn
 from security import create_access_token, get_current_user
 
 # Login and invitation redemption have to work without a token
@@ -12,11 +12,12 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 INVITATION_VALIDITY = timedelta(days=3)
 
 
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=LoginOut)
 def login(body: LoginIn):
-    user = one("authenticate", body.email, body.password, status=401, detail="Credenciales inválidas")
-    token = create_access_token({"sub": str(user["authenticate"])})
-    return Token(access_token=token)
+    user_id = one("authenticate", body.email, body.password, status=401, detail="Credenciales inválidas")["authenticate"]
+    user = one("get_user_by_id", user_id)
+    token = create_access_token({"sub": str(user_id)})
+    return LoginOut(access_token=token, user={**user, "user_id": user_id})
 
 
 invitations_router = APIRouter(prefix="/invitations", tags=["auth"])
