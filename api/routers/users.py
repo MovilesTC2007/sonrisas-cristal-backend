@@ -1,3 +1,4 @@
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -10,7 +11,7 @@ router = APIRouter(prefix="/users", tags=["users"], dependencies=[Depends(get_cu
 
 
 @router.get("/me", response_model=UserOut)
-def get_me(user_id: UUID = Depends(get_current_user)):
+def get_me(user_id: Annotated[UUID, Depends(get_current_user)]):
     user = one("get_user_by_id", user_id)
     return {**user, "user_id": user_id}
 

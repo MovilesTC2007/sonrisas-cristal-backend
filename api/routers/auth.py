@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 from fastapi import APIRouter, Depends
 
 from db import one
-from schemas import InvitationIn, LoginIn, LoginOut, RedeemIn, Token
+from schemas import InvitationIn, LoginIn, LoginOut, RedeemIn
 from security import create_access_token, get_current_user
 
 # Login and invitation redemption have to work without a token
