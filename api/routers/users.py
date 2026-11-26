@@ -1,10 +1,10 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 from db import many, one
-from schemas import UserIn, UserOut
+from schemas import UserOut, UserProfileUpdate, UserRoleUpdate
 from security import RequesterDep, UserResource, authorize, get_current_user
 
 router = APIRouter(prefix="/users", tags=["users"], dependencies=[Depends(get_current_user)])
@@ -27,13 +27,22 @@ def get_user(user_id: UUID, requester: RequesterDep):
 
 
 @router.put("/{user_id}")
-def update_user(user_id: UUID, b: UserIn, requester: RequesterDep):
+def update_user(user_id: UUID, b: UserProfileUpdate, requester: RequesterDep):
     authorize(requester, "update_user", load_user(user_id))
-    if b.daycare_id != requester.daycare_id:
-        raise HTTPException(status_code=403, detail="No autorizado")
+    current = one("get_user_by_id", user_id)
     return one(
-        "modify_user", user_id, b.daycare_id, b.name, b.lastname, b.email,
-        b.role_id, b.position_id, b.is_active,
+        "modify_user", user_id, current["daycare_id"], b.name, b.lastname, b.email,
+        current["role_id"], b.position_id, b.is_active,
+    )
+
+
+@router.put("/{user_id}/role")
+def update_user_role(user_id: UUID, b: UserRoleUpdate, requester: RequesterDep):
+    authorize(requester, "update_user_role", load_user(user_id))
+    current = one("get_user_by_id", user_id)
+    return one(
+        "modify_user", user_id, b.daycare_id or current["daycare_id"], current["name"], current["lastname"],
+        current["email"], b.role_id, current["position_id"], current["is_active"],
     )
 
 

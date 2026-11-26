@@ -25,7 +25,8 @@ invitations_router = APIRouter(prefix="/invitations", tags=["auth"])
 
 @invitations_router.post("", status_code=201, dependencies=[Depends(get_current_user)])
 def create_invitation(body: InvitationIn, requester: RequesterDep):
-    authorize(requester, "create_invitation", InvitationCodeResource(daycare_id=body.daycare_id))
+    role = one("get_roles_description", body.role_id, status=400, detail="Rol inválido")["get_roles_description"]
+    authorize(requester, "create_invitation", InvitationCodeResource(daycare_id=body.daycare_id, role=role))
     expires_at = datetime.now(UTC).replace(tzinfo=None) + INVITATION_VALIDITY
     return one(
         "generate_invitation_code",

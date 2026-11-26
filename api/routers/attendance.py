@@ -19,7 +19,7 @@ def create_attendance(b: AttendanceIn, requester: RequesterDep):
     # A repeated `uuid` returns 409: the app should treat that as "already synced".
     return one(
         "add_attendance", b.user_id, b.shift_id, b.attendance_date, b.check_in,
-        b.status, b.notes, b.registered_by, b.uuid,
+        b.status, b.notes, requester.id, b.uuid,
     )
 
 

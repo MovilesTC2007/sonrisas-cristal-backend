@@ -19,7 +19,7 @@ def load_history(history_id: UUID) -> HistoryResource:
 def create_history(b: HistoryIn, requester: RequesterDep):
     target = UserResource(**one("get_user_resource", b.user_id))
     authorize(requester, "create_history", HistoryResource(user_id=b.user_id, daycare_id=target.daycare_id))
-    return one("add_personnel_history", b.user_id, b.action, b.action_date, b.notes, b.changed_by)
+    return one("add_personnel_history", b.user_id, b.action, b.action_date, b.notes, requester.id)
 
 
 @router.get("/{history_id}")
@@ -32,5 +32,5 @@ def get_history(history_id: UUID, requester: RequesterDep):
 def update_history(history_id: UUID, b: HistoryUpdate, requester: RequesterDep):
     authorize(requester, "update_history", load_history(history_id))
     return one(
-        "modify_personnel_history", history_id, b.action, b.action_date, b.notes, b.changed_by
+        "modify_personnel_history", history_id, b.action, b.action_date, b.notes, requester.id
     )

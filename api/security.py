@@ -7,7 +7,6 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from oso import Oso
-from oso.exceptions import ForbiddenError, NotFoundError
 from pydantic import BaseModel
 
 from db import one
@@ -21,7 +20,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 # Password hashing/verification is done in Postgres (pgcrypto + pepper, see
 # functions.sql `authenticate`/`add_user`) — this file never sees a raw hash.
 
-# oso initialization
 # oso initialization
 class Requester(BaseModel):
     id: UUID
@@ -41,6 +39,7 @@ class AreaResource(BaseModel):
 
 class InvitationCodeResource(BaseModel):
     daycare_id: UUID
+    role: str  # target role description (e.g. "staff", "encargado"), not the role_id
 
 class RequestResource(BaseModel):
     user_id: UUID
@@ -74,10 +73,11 @@ oso.load_files(["policy.polar"])
 
 
 def authorize(requester: Requester, action: str, resource: object) -> None:
-    try:
-        oso.authorize(requester, action, resource)
-    except (ForbiddenError, NotFoundError) as exc:
-        raise HTTPException(status_code=403, detail="No autorizado") from exc
+    # is_allowed() (not authorize()) because this policy has no "read" rule
+    # for Oso to fall back on when deciding 403 vs 404; a plain boolean check
+    # avoids depending on that undefined fallback.
+    if not oso.is_allowed(requester, action, resource):
+        raise HTTPException(status_code=403, detail="No autorizado")
 
 def create_access_token(data: dict, expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES) -> str:
     to_encode = data.copy()

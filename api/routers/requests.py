@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 
 from db import one
-from schemas import RequestIn
+from schemas import RequestIn, RequestResolve
 from security import RequesterDep, RequestResource, UserResource, authorize, get_current_user
 
 router = APIRouter(prefix="/requests", tags=["requests"], dependencies=[Depends(get_current_user)])
@@ -22,8 +22,17 @@ def get_request(request_id: UUID, requester: RequesterDep):
 def create_request(b: RequestIn, requester: RequesterDep):
     target = UserResource(**one("get_user_resource", b.user_id))
     authorize(requester, "create_request", RequestResource(user_id=b.user_id, daycare_id=target.daycare_id))
+
     return one(
-        "add_request", b.user_id, b.type, b.status, b.request_date or datetime.now(UTC),
-        b.resolved_at, b.resolved_by, b.notes,
+        "add_request", b.user_id, b.type, "Pending", b.request_date or datetime.now(UTC),
+        None, None, b.notes,
+    )
+
+
+@router.put("/{request_id}")
+def resolve_request(request_id: UUID, b: RequestResolve, requester: RequesterDep):
+    authorize(requester, "resolve_request", load_request(request_id))
+    return one(
+        "modify_request", request_id, b.status, datetime.now(UTC), requester.id, b.notes,
     )
 
