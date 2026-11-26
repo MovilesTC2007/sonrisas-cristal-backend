@@ -84,8 +84,8 @@ SELECT add_user(
 SELECT add_user(
     (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Apodaca'),
     'Diego', 'Hernández', 'Test1234!', 'diego.hernandez@sonrisascristal.com',
-    (SELECT role_id FROM roles WHERE description = 'staff'),
-    (SELECT position_id FROM positions WHERE description = 'profesor'),
+    (SELECT role_id FROM roles WHERE description = 'encargado'),
+    (SELECT position_id FROM positions WHERE description = 'encargado'),
     TRUE);
 
 SELECT add_user(

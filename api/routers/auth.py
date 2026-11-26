@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from db import one
 from schemas import InvitationIn, LoginIn, LoginOut, RedeemIn
-from security import create_access_token, get_current_user
+from security import InvitationCodeResource, RequesterDep, authorize, create_access_token, get_current_user
 
 # Login and invitation redemption have to work without a token
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -24,10 +24,14 @@ invitations_router = APIRouter(prefix="/invitations", tags=["auth"])
 
 
 @invitations_router.post("", status_code=201, dependencies=[Depends(get_current_user)])
-def create_invitation(body: InvitationIn):
+def create_invitation(body: InvitationIn, requester: RequesterDep):
+    authorize(requester, "create_invitation", InvitationCodeResource(daycare_id=body.daycare_id))
     expires_at = datetime.now(UTC).replace(tzinfo=None) + INVITATION_VALIDITY
-    return one("generate_invitation_code", body.daycare_id, body.role_id, expires_at)
-
+    return one(
+        "generate_invitation_code",
+        body.daycare_id, body.role_id, body.position_id,
+        body.name, body.lastname, body.is_active, expires_at,
+    )
 
 @invitations_router.post("/redeem")
 def redeem_invitation(body: RedeemIn):
