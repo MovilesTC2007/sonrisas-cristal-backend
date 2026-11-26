@@ -9,6 +9,9 @@ dependencies = [
     "oso>=0.27.3",
 ]
 
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
 [tool.ruff]
 line-length = 145
 
