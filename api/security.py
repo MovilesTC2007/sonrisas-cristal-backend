@@ -15,8 +15,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 if not SECRET_KEY or len(SECRET_KEY) < 32:
     raise RuntimeError("SECRET_KEY must be set to a random string of at least 32 characters")
 
-# Fixed, not configurable: letting ALGORITHM come from the environment opens
-# the door to an "alg": "none"-style downgrade if it's ever misconfigured.
+# Letting ALGORITHM come from the environment opens the door to an "alg": "none"-style downgrade if it's ever misconfigured.
 ALGORITHM = "HS256"
 REQUIRED_CLAIMS = ["sub", "jti", "iat", "exp"]
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES"))
