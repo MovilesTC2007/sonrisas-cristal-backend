@@ -9,6 +9,8 @@ services:
     environment:
       UV_PROJECT_ENVIRONMENT: /tmp/.venv
       UV_CACHE_DIR: /tmp/uv-cache
+      # Avoid filling the memory-backed /tmp with uv's package cache.
+      UV_NO_CACHE: "1"
     volumes:
       - ./api:/app:ro
     # Direct API access is for local tools and the Android emulator.
