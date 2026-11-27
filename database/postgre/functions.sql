@@ -283,6 +283,14 @@ LANGUAGE sql AS $$
     RETURNING request_id;
 $$;
 
+-- resolve a request: set its status, resolution time, resolver and notes
+CREATE OR REPLACE FUNCTION modify_request(p_request_id UUID, p_status status_of_requests, p_resolved_at TIMESTAMPTZ, p_resolved_by UUID, p_notes TEXT)
+RETURNS UUID
+LANGUAGE sql AS $$
+    UPDATE requests SET status = p_status, resolved_at = p_resolved_at, resolved_by = p_resolved_by, notes = p_notes WHERE request_id = p_request_id
+    RETURNING request_id;
+$$;
+
 -- SHIFT
 
 -- create a new shift and attributes
