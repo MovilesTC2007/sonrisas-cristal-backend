@@ -38,14 +38,17 @@ LANGUAGE sql
 SECURITY DEFINER
 SET search_path = pg_catalog, public
 AS $$
+    -- LEFT JOIN + COALESCE(..., gen_salt(...)) makes crypt() run the same
+    -- expensive bcrypt computation whether or not the email exists, so a
+    -- non-existent email can't be told apart from a wrong password by timing.
+    -- lower() on both sides matches the case-insensitive unique index on email.
     SELECT u.user_id
-    FROM users u
-    WHERE u.email = p_email
-      AND u.is_active = TRUE
-      AND u.password_hash = crypt(
-          encode(hmac(p_password, get_password_pepper(), 'sha256'), 'base64'),
-          u.password_hash
-      );
+    FROM (SELECT 1) AS probe
+    LEFT JOIN users u ON lower(u.email) = lower(p_email) AND u.is_active = TRUE
+    WHERE crypt(
+        encode(hmac(p_password, get_password_pepper(), 'sha256'), 'base64'),
+        COALESCE(u.password_hash, gen_salt('bf', 12))
+    ) = u.password_hash;
 $$;
 
 -- Create a user and hash the password with the mounted pepper.
