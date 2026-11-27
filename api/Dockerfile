@@ -15,11 +15,14 @@ RUN groupadd --system app \
 
 WORKDIR /app
 
-COPY --chown=10001:10001 pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock ./
 
 RUN uv sync --frozen --no-dev
 
-COPY --chown=10001:10001 . .
+# Deliberately not --chown'd to the app user: it stays root-owned so even a
+# fully compromised app process can't rewrite its own source on disk if the
+# read_only filesystem guard in compose.yml is ever disabled or bypassed.
+COPY . .
 
 EXPOSE 8000
 
