@@ -2,6 +2,78 @@
 -- This are the Functions and Procedures divided by tables
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
+-- AUTHORIZATION RESOURCES (facts the policy needs)
+
+DROP FUNCTION IF EXISTS get_user_resource(UUID);
+CREATE FUNCTION get_user_resource(p_user_id UUID)
+RETURNS TABLE (user_id UUID, role TEXT, daycare_id UUID)
+LANGUAGE sql AS $$
+    SELECT u.user_id, r.description, u.daycare_id
+    FROM users u
+    JOIN roles r ON r.role_id = u.role_id
+    WHERE u.user_id = p_user_id;
+$$;
+
+CREATE OR REPLACE FUNCTION get_daycare_resource(p_daycare_id UUID)
+RETURNS TABLE (daycare_id UUID)
+LANGUAGE sql AS $$
+    SELECT d.daycare_id FROM daycare d WHERE d.daycare_id = p_daycare_id;
+$$;
+
+DROP FUNCTION IF EXISTS get_area_resource(UUID);
+CREATE FUNCTION get_area_resource(p_area_id UUID)
+RETURNS TABLE (daycare_id UUID)
+LANGUAGE sql AS $$
+    SELECT a.daycare_id FROM area a WHERE a.area_id = p_area_id;
+$$;
+
+DROP FUNCTION IF EXISTS get_invitation_code_resource(UUID);
+CREATE FUNCTION get_invitation_code_resource(p_code_id UUID)
+RETURNS TABLE (daycare_id UUID)
+LANGUAGE sql AS $$
+    SELECT c.daycare_id FROM invitation_code c WHERE c.code_id = p_code_id;
+$$;
+
+DROP FUNCTION IF EXISTS get_request_resource(UUID);
+CREATE FUNCTION get_request_resource(p_request_id UUID)
+RETURNS TABLE (user_id UUID, daycare_id UUID)
+LANGUAGE sql AS $$
+    SELECT r.user_id, u.daycare_id
+    FROM requests r JOIN users u ON u.user_id = r.user_id
+    WHERE r.request_id = p_request_id;
+$$;
+
+DROP FUNCTION IF EXISTS get_shift_resource(UUID);
+CREATE FUNCTION get_shift_resource(p_shift_id UUID)
+RETURNS TABLE (user_id UUID, daycare_id UUID)
+LANGUAGE sql AS $$
+    SELECT s.user_id, a.daycare_id
+    FROM shift s JOIN area a ON a.area_id = s.area_id
+    WHERE s.shift_id = p_shift_id;
+$$;
+
+DROP FUNCTION IF EXISTS get_attendance_resource(UUID);
+CREATE FUNCTION get_attendance_resource(p_attendance_id UUID)
+RETURNS TABLE (user_id UUID, daycare_id UUID)
+LANGUAGE sql AS $$
+    SELECT t.user_id, a.daycare_id
+    FROM attendance t
+    JOIN shift s ON s.shift_id = t.shift_id
+    JOIN area a ON a.area_id = s.area_id
+    WHERE t.attendance_id = p_attendance_id;
+$$;
+
+DROP FUNCTION IF EXISTS get_personnel_history_resource(UUID);
+CREATE FUNCTION get_personnel_history_resource(p_personnel_history_id UUID)
+RETURNS TABLE (user_id UUID, daycare_id UUID)
+LANGUAGE sql AS $$
+    SELECT h.user_id, u.daycare_id
+    FROM personnel_history h JOIN users u ON u.user_id = h.user_id
+    WHERE h.personnel_history_id = p_personnel_history_id;
+$$;
+
+
+
 -- ROLES
 
 -- obtain the role name by its ID
@@ -208,6 +280,14 @@ CREATE OR REPLACE FUNCTION add_request(p_user_id UUID, p_type types_of_requests,
 RETURNS UUID
 LANGUAGE sql AS $$
     INSERT INTO requests (user_id, type, status, request_date, resolved_at, resolved_by, notes) VALUES (p_user_id, p_type, p_status, p_request_date, p_resolved_at, p_resolved_by, p_notes)
+    RETURNING request_id;
+$$;
+
+-- resolve a request: set its status, resolution time, resolver and notes
+CREATE OR REPLACE FUNCTION modify_request(p_request_id UUID, p_status status_of_requests, p_resolved_at TIMESTAMPTZ, p_resolved_by UUID, p_notes TEXT)
+RETURNS UUID
+LANGUAGE sql AS $$
+    UPDATE requests SET status = p_status, resolved_at = p_resolved_at, resolved_by = p_resolved_by, notes = p_notes WHERE request_id = p_request_id
     RETURNING request_id;
 $$;
 

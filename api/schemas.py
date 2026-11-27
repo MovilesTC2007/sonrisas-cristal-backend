@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 RequestType = Literal["Vacation", "Sick Leave", "Personal Leave"]
 RequestStatus = Literal["Pending", "Approved", "Rejected"]
+RequestResolution = Literal["Approved", "Rejected"]
 AttendanceStatus = Literal["Attended", "Late", "Absent", "Left Early"]
 
 
@@ -50,15 +51,21 @@ class InvitationIn(BaseModel):
     is_active: bool = False
 
 
-class UserIn(BaseModel):
-    daycare_id: UUID
+class UserProfileUpdate(BaseModel):
+    """Self/encargado-editable fields. role_id and daycare_id are deliberately
+    excluded: changing them is privilege-sensitive and goes through
+    `UserRoleUpdate` (director-only) instead."""
+
     name: str = Field(min_length=1, max_length=100)
     lastname: str = Field(min_length=1, max_length=100)
-    password: str
     email: str = Field(max_length=99)
-    role_id: UUID | None = None
     position_id: UUID | None = None
     is_active: bool = False
+
+
+class UserRoleUpdate(BaseModel):
+    role_id: UUID
+    daycare_id: UUID | None = None
 
 
 class DaycareIn(BaseModel):
@@ -81,12 +88,18 @@ class AreaUpdate(BaseModel):
 
 
 class RequestIn(BaseModel):
+    """status/resolved_at/resolved_by are deliberately absent: a request is
+    always created as Pending and resolved only through `RequestResolve`, by
+    someone with authority over it, never by the requester at creation time."""
+
     user_id: UUID
     type: RequestType
-    status: RequestStatus = "Pending"
     request_date: datetime | None = None
-    resolved_at: datetime | None = None
-    resolved_by: UUID | None = None
+    notes: str | None = Field(default=None, max_length=1000)
+
+
+class RequestResolve(BaseModel):
+    status: RequestResolution
     notes: str | None = Field(default=None, max_length=1000)
 
 
@@ -103,13 +116,16 @@ class ShiftIn(BaseModel):
 
 
 class AttendanceIn(BaseModel):
+    """registered_by is deliberately absent: it is always the authenticated
+    requester, never a client-supplied id (otherwise anyone could forge
+    another user's name into the audit trail)."""
+
     user_id: UUID
     shift_id: UUID
     attendance_date: date
     check_in: datetime | None = None
     status: AttendanceStatus | None = None
     notes: str | None = Field(default=None, max_length=1000)
-    registered_by: UUID
     uuid: str = Field(min_length=1, max_length=64)  # generated on the phone; makes offline sync idempotent
 
 
@@ -121,15 +137,17 @@ class AttendanceUpdate(BaseModel):
 
 
 class HistoryIn(BaseModel):
+    """changed_by is deliberately absent: it is always the authenticated
+    requester, never a client-supplied id (otherwise staff could forge who
+    is credited with an HR record)."""
+
     user_id: UUID
     action: str = Field(min_length=1, max_length=100)
     action_date: date
     notes: str | None = Field(default=None, max_length=1000)
-    changed_by: UUID
 
 
 class HistoryUpdate(BaseModel):
     action: str = Field(min_length=1, max_length=100)
     action_date: date
     notes: str | None = Field(default=None, max_length=1000)
-    changed_by: UUID
