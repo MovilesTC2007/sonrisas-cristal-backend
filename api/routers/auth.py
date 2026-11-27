@@ -53,6 +53,11 @@ def create_invitation(body: InvitationIn, requester: RequesterDep):
         body.name, body.lastname, body.is_active, expires_at,
     )
 
-@invitations_router.post("/redeem")
+@invitations_router.post("/redeem", status_code=201)
 def redeem_invitation(body: RedeemIn):
-    return one("redeem_invitation_code", body.code, status=400, detail="Código inválido o ya usado")
+    row = one(
+        "redeem_invitation_code",
+        body.code, body.email.lower(), body.password,
+        status=400, detail="Código inválido o ya usado",
+    )
+    return {"user_id": row["redeem_invitation_code"]}
