@@ -4,9 +4,14 @@ This system integrates the deployment and infrastructure supporting the mobile a
 
 The system reinforces heavily the cibersecurity, observability, CI/CD and deployment.
 
-## How to run this project
-```
-docker compose up --build
+## Run locally
+Development settings are opt-in: the file `compose.dev.yml` is not loaded by
+plain `docker compose up`. Include it explicitly to enable the source mount and
+FastAPI development server.
+
+```powershell
+# Local development only: starts the API and database with development settings.
+docker compose -f compose.yml -f compose.dev.yml up --build db api
 ```
 
 ## Tech Stack

@@ -1,0 +1,8 @@
+# Development-only override; Compose does not load this file automatically.
+# Include it explicitly with `-f compose.dev.yml` for local development.
+services:
+  api:
+    env_file: .env
+    volumes:
+      - ./api:/app
+    command: ["sh", "-c", "uv sync && fastapi dev main.py --host 0.0.0.0 --port 8000"]
