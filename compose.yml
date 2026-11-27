@@ -42,7 +42,9 @@ services:
     # docker compose --profile security run --rm zap
       
   nginx-tls:
-    image: nginx:1.27-alpine
+    # This image checks that the TLS certificate files exist before Nginx starts.
+    build: ./nginx
+    image: sonrisas-cristal-nginx:1.27-alpine
     ports:
       - "443:443"
     volumes:
