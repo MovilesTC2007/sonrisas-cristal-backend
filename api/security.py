@@ -1,6 +1,4 @@
-import hashlib
 import os
-import threading
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 from uuid import UUID, uuid4
@@ -11,10 +9,16 @@ from jose import JWTError, jwt
 from oso import Oso
 from pydantic import BaseModel
 
-from db import one
+from db import call, one
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
-ALGORITHM = os.environ.get("ALGORITHM")
+if not SECRET_KEY or len(SECRET_KEY) < 32:
+    raise RuntimeError("SECRET_KEY must be set to a random string of at least 32 characters")
+
+# Fixed, not configurable: letting ALGORITHM come from the environment opens
+# the door to an "alg": "none"-style downgrade if it's ever misconfigured.
+ALGORITHM = "HS256"
+REQUIRED_CLAIMS = ["sub", "jti", "iat", "exp"]
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
@@ -81,38 +85,28 @@ def authorize(requester: Requester, action: str, resource: object) -> None:
     if not oso.is_allowed(requester, action, resource):
         raise HTTPException(status_code=403, detail="No autorizado")
 
-# Blacklist of logged-out JWTs (in memory): sha256(token) -> expiry (unix seconds).
-# Only the hash is kept. Entries are dropped once the token would have expired anyway.
-# NOTE: emptied on API restart and not shared between workers/containers.
-_blacklist: dict[str, int] = {}
-_blacklist_lock = threading.Lock()
-
-
-def _digest(token: str) -> str:
-    return hashlib.sha256(token.encode()).hexdigest()
-
-
 def create_access_token(data: dict, expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES) -> str:
     to_encode = data.copy()
-    expire = datetime.now(UTC) + timedelta(minutes=expires_minutes)
+    now = datetime.now(UTC)
+    expire = now + timedelta(minutes=expires_minutes)
     # jti makes every token unique, so logging out one session never affects another
-    to_encode.update({"exp": expire, "jti": uuid4().hex})
+    to_encode.update({"iat": now, "exp": expire, "jti": uuid4().hex})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
+def _decode(token: str) -> dict:
+    return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM], options={"require": REQUIRED_CLAIMS})
+
+
 def revoke_token(token: str) -> None:
-    """Put a valid token in the blacklist until it expires."""
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    now = int(datetime.now(UTC).timestamp())
-    with _blacklist_lock:
-        for key in [k for k, exp in _blacklist.items() if exp <= now]:
-            del _blacklist[key]
-        _blacklist[_digest(token)] = int(payload["exp"])
+    """Record the token's jti as revoked in the database until it would have expired anyway."""
+    payload = _decode(token)
+    expires_at = datetime.fromtimestamp(payload["exp"], tz=UTC)
+    call("revoke_jwt", payload["jti"], expires_at)
 
 
-def is_revoked(token: str) -> bool:
-    with _blacklist_lock:
-        return _digest(token) in _blacklist
+def is_revoked(jti: str) -> bool:
+    return bool(one("is_jwt_revoked", jti)["is_jwt_revoked"])
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> UUID:
@@ -122,11 +116,11 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> UUID:
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = _decode(token)
         user_id = payload.get("sub")
     except JWTError as e:
         raise credentials_error from e
-    if user_id is None or is_revoked(token):
+    if user_id is None or is_revoked(payload["jti"]):
         raise credentials_error
     try:
         return UUID(user_id)

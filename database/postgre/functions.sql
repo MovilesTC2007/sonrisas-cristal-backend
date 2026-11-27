@@ -8,10 +8,28 @@ DROP FUNCTION IF EXISTS get_user_resource(UUID);
 CREATE FUNCTION get_user_resource(p_user_id UUID)
 RETURNS TABLE (user_id UUID, role TEXT, daycare_id UUID)
 LANGUAGE sql AS $$
+    -- is_active = TRUE here means a deactivated user's existing JWT stops
+    -- working on its very next request instead of staying valid until it expires.
     SELECT u.user_id, r.description, u.daycare_id
     FROM users u
     JOIN roles r ON r.role_id = u.role_id
-    WHERE u.user_id = p_user_id;
+    WHERE u.user_id = p_user_id AND u.is_active = TRUE;
+$$;
+
+-- Persistent replacement for the in-memory logout blacklist.
+CREATE OR REPLACE FUNCTION revoke_jwt(p_jti TEXT, p_expires_at TIMESTAMPTZ)
+RETURNS VOID
+LANGUAGE sql AS $$
+    INSERT INTO revoked_token (jti, expires_at) VALUES (p_jti, p_expires_at)
+    ON CONFLICT (jti) DO NOTHING;
+$$;
+
+CREATE OR REPLACE FUNCTION is_jwt_revoked(p_jti TEXT)
+RETURNS BOOLEAN
+LANGUAGE sql AS $$
+    SELECT EXISTS (
+        SELECT 1 FROM revoked_token WHERE jti = p_jti AND expires_at > now()
+    );
 $$;
 
 CREATE OR REPLACE FUNCTION get_daycare_resource(p_daycare_id UUID)
@@ -242,9 +260,16 @@ $$;
 CREATE OR REPLACE FUNCTION authenticate(p_email TEXT, p_password TEXT)
 RETURNS UUID
 LANGUAGE sql AS $$
-    SELECT u.user_id FROM users u WHERE u.email = p_email AND u.is_active = TRUE
-    AND u.password_hash = crypt(
-        encode(hmac(p_password, current_setting('app.password_pepper'), 'sha256'), 'base64'), u.password_hash);
+    -- LEFT JOIN + COALESCE(..., gen_salt(...)) makes crypt() run the same
+    -- expensive bcrypt computation whether or not the email exists, so a
+    -- non-existent email can't be told apart from a wrong password by timing.
+    SELECT u.user_id
+    FROM (SELECT 1) AS probe
+    LEFT JOIN users u ON lower(u.email) = lower(p_email) AND u.is_active = TRUE
+    WHERE crypt(
+        encode(hmac(p_password, current_setting('app.password_pepper'), 'sha256'), 'base64'),
+        COALESCE(u.password_hash, gen_salt('bf', 12))
+    ) = u.password_hash;
 $$;
 
 -- create a new user and attributes

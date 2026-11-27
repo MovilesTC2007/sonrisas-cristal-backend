@@ -78,6 +78,16 @@ CREATE TABLE users(
     FOREIGN KEY (daycare_id) REFERENCES daycare(daycare_id) ON DELETE RESTRICT
 );
 
+-- Case-insensitive uniqueness: "Ana@x.com" and "ana@x.com" must be the same account.
+CREATE UNIQUE INDEX users_email_lower_key ON users (lower(email));
+
+-- Persistent JWT logout list (survives API restarts, shared across workers/containers).
+-- Only jti is stored, never the token itself.
+CREATE TABLE revoked_token(
+    jti TEXT PRIMARY KEY,
+    expires_at TIMESTAMPTZ NOT NULL
+);
+
 CREATE TYPE types_of_requests AS ENUM ('Vacation', 'Sick Leave', 'Personal Leave'); -- Add more later
 CREATE TYPE status_of_requests AS ENUM ('Pending', 'Approved', 'Rejected'); -- Add more later
 CREATE TABLE requests(
