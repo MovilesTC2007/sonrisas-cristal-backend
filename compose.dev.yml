@@ -21,3 +21,14 @@ services:
     volumes:
       # The local certificate is stored here and is ignored by Git.
       - ./nginx/certs:/etc/nginx/certs:rw
+      - dev_cloudflared_ca:/etc/nginx/cloudflared-ca:rw
+  cloudflared:
+    command: >
+      tunnel --no-autoupdate --url https://nginx-tls:443
+      --origin-server-name localhost
+      --origin-ca-pool /etc/cloudflared/ca/local_cert.pem
+    volumes:
+      - dev_cloudflared_ca:/etc/cloudflared/ca:ro
+
+volumes:
+  dev_cloudflared_ca:

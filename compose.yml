@@ -108,7 +108,7 @@ services:
     image: cloudflare/cloudflared:2026.11.2
     command: >
       tunnel --no-autoupdate --url https://nginx-tls:443
-      --origin-server-name localhost --no-tls-verify
+      --origin-server-name ${CLOUDFLARED_ORIGIN_SERVER_NAME:-localhost}
     read_only: true
     cap_drop:
       - ALL

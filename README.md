@@ -20,6 +20,10 @@ plain `docker compose up`. Include it explicitly to enable the source mount and
 FastAPI development server. Nginx creates a self-signed certificate for local
 use; browsers will warn that it is not publicly trusted. The development file
 also publishes the API and database ports; do not use it for server deployment.
+Cloudflared verifies the Nginx certificate. For deployment, set
+`CLOUDFLARED_ORIGIN_SERVER_NAME` to a hostname present in the certificate and
+use a certificate issued by a trusted CA. Local development explicitly trusts
+the public self-signed certificate; it does not disable TLS verification.
 
 ```powershell
 # Create a private pepper file once; keep its value for future deployments.
