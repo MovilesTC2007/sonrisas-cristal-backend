@@ -1,0 +1,2 @@
+# Keep local certificates and private keys out of the image build context.
+certs/

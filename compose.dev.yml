@@ -1,0 +1,36 @@
+# Development-only override; Compose does not load this file automatically.
+# Include it explicitly with `-f compose.dev.yml` for local development.
+services:
+  db:
+    # Host access to PostgreSQL is available only in the local configuration.
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+  api:
+    environment:
+      UV_PROJECT_ENVIRONMENT: /tmp/.venv
+      UV_CACHE_DIR: /tmp/uv-cache
+      # Avoid filling the memory-backed /tmp with uv's package cache.
+      UV_NO_CACHE: "1"
+    volumes:
+      - ./api:/app:ro
+    # Direct API access is for local tools and the Android emulator.
+    ports:
+      - "${API_PORT:-8000}:8000"
+    command: ["sh", "-c", "uv sync --locked && uv run fastapi dev main.py --host 0.0.0.0 --port 8000"]
+  nginx-tls:
+    environment:
+      GENERATE_DEV_CERT: "true"
+    volumes:
+      # The local certificate is stored here and is ignored by Git.
+      - ./nginx/certs:/etc/nginx/certs:rw
+      - dev_cloudflared_ca:/etc/nginx/cloudflared-ca:rw
+  cloudflared:
+    command: >
+      tunnel --no-autoupdate --url https://nginx-tls:443
+      --origin-server-name localhost
+      --origin-ca-pool /etc/cloudflared/ca/local_cert.pem
+    volumes:
+      - dev_cloudflared_ca:/etc/cloudflared/ca:ro
+
+volumes:
+  dev_cloudflared_ca:

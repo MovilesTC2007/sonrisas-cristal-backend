@@ -14,6 +14,11 @@ jobs:
       - name: Create .env from .env.example
         run: cp .env.example .env
 
+      - name: Create pepper secret
+        run: |
+          mkdir -p secrets
+          openssl rand -base64 32 > secrets/password_pepper
+
       - name: Raise the docker compose 
         run: docker compose down -v && docker compose build --no-cache db && docker compose up -d db
 
@@ -25,3 +30,7 @@ jobs:
       - name: Cleanup
         if: always()
         run: docker compose down -v
+
+      - name: Remove pepper secret
+        if: always()
+        run: rm -f secrets/password_pepper

@@ -65,7 +65,7 @@ WHERE d.name = 'Sonrisas Cristal - Norte' AND r.description = 'staff' AND p.desc
 -- ---------------------------------------------------------------------------
 -- Seed users through add_user() so hashes are properly peppered + salted.
 -- All seed users share the dev password 'Test1234!'. Development only.
--- Requires: schema -> functions.sql -> this file (in that order).
+-- Requires: schema -> functions.sql -> password-functions.sql -> this file.
 
 SELECT add_user(
     (SELECT daycare_id FROM daycare WHERE name = 'Sonrisas Cristal - Apodaca'),
