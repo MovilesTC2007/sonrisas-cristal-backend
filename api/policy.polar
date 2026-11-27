@@ -36,9 +36,10 @@ allow(requester: Requester, "update_user_role", _user: UserResource) if
 allow(requester: Requester, "create_daycare", _resource: Requester) if
     requester.role = "director";
 
-# get_daycare: allowed for members of the same daycare
+# get_daycare: allowed for members of the same daycare, or any director
 allow(requester: Requester, "get_daycare", daycare: DaycareResource) if
-    requester.daycare_id = daycare.daycare_id;
+    requester.daycare_id = daycare.daycare_id
+    or requester.role = "director";
 
 # get_daycare_information: allowed for directors or the encargado of the same daycare
 allow(requester: Requester, "get_daycare_information", daycare: DaycareResource) if
