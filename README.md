@@ -8,7 +8,8 @@ The system reinforces heavily the cibersecurity, observability, CI/CD and deploy
 Development settings are opt-in: the file `compose.dev.yml` is not loaded by
 plain `docker compose up`. Include it explicitly to enable the source mount and
 FastAPI development server. Nginx creates a self-signed certificate for local
-use; browsers will warn that it is not publicly trusted.
+use; browsers will warn that it is not publicly trusted. The development file
+also publishes the API and database ports; do not use it for server deployment.
 
 ```powershell
 # Local development: starts the API, database, and Nginx with a local certificate.
