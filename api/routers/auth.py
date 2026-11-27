@@ -55,4 +55,11 @@ def create_invitation(body: InvitationIn, requester: RequesterDep):
 
 @invitations_router.post("/redeem")
 def redeem_invitation(body: RedeemIn):
-    return one("redeem_invitation_code", body.code, status=400, detail="Código inválido o ya usado")
+    return one(
+        "redeem_invitation_code",
+        body.code,
+        body.email,
+        body.password,
+        status=400,
+        detail="Código inválido o ya usado",
+    )
