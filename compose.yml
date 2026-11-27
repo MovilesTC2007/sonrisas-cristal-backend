@@ -2,7 +2,8 @@ services:
   db:
     build: ./database/postgre
     env_file: .env
-    command: ["postgres", "-c", "app.password_pepper=${PASSWORD_PEPPER}"]
+    secrets:
+      - password_pepper
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -13,9 +14,11 @@ services:
 
   api:
     build: ./api
-    env_file: .env
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      DATABASE_URL: postgresql://${API_DB_USER}:${API_DB_PASSWORD}@db:5432/${POSTGRES_DB}
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: ${ALGORITHM}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
     depends_on:
       db:
         condition: service_healthy
@@ -60,3 +63,7 @@ services:
 
 volumes:
   postgres_data:
+
+secrets:
+  password_pepper:
+    file: ${PASSWORD_PEPPER_FILE:-./secrets/password_pepper}

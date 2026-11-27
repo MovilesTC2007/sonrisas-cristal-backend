@@ -6,7 +6,6 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
   api:
-    env_file: .env
     volumes:
       - ./api:/app
     # Direct API access is for local tools and the Android emulator.

@@ -8,4 +8,7 @@ FROM postgres:16-alpine
 
 COPY tables.sql /docker-entrypoint-initdb.d/01-tables.sql
 COPY functions.sql /docker-entrypoint-initdb.d/02-functions.sql
+COPY password-functions.sql /docker-entrypoint-initdb.d/02-password-functions.sql
 COPY seed.sql /docker-entrypoint-initdb.d/03-seed.sql
+# Create the API login after the schema and seed data exist.
+COPY 04-api-role.sql /docker-entrypoint-initdb.d/04-api-role.sql

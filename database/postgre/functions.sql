@@ -199,27 +199,6 @@ BEGIN
 END;
 $$;
 
--- redeem an invitation code: consumes it and creates the user from the predefined fields stored on
--- the invitation plus the email/password supplied by the person redeeming it. Returns no rows if the
--- code does not exist or has expired, otherwise returns the new user ID.
-CREATE OR REPLACE FUNCTION redeem_invitation_code(p_code TEXT, p_email TEXT, p_password TEXT)
-RETURNS UUID
-LANGUAGE sql AS $$
-    WITH invitation AS (
-        DELETE FROM invitation_code ic
-        WHERE ic.code = upper(p_code) AND ic.expires_at > now()
-        RETURNING ic.daycare_id, ic.role_id, ic.position_id, ic.name, ic.lastname, ic.is_active
-    )
-    INSERT INTO users (daycare_id, name, lastname, password_hash, email, role_id, position_id, is_active)
-    SELECT
-        invitation.daycare_id, invitation.name, invitation.lastname,
-        crypt(encode(hmac(p_password, current_setting('app.password_pepper'), 'sha256'), 'base64'), gen_salt('bf', 12)),
-        p_email, invitation.role_id, invitation.position_id, invitation.is_active
-    FROM invitation
-    RETURNING user_id;
-$$;
-
-
 -- USERS
 
 -- get an user info by its ID, including daycare ID, name, last name, email, role ID, position ID, if its active and the last update date
@@ -234,27 +213,6 @@ CREATE OR REPLACE FUNCTION modify_user(p_user_id UUID, p_daycare_id UUID, p_name
 RETURNS UUID
 LANGUAGE sql AS $$
     UPDATE users SET daycare_id = p_daycare_id, name = p_name, lastname = p_lastname, email = p_email, role_id = p_role_id, position_id = p_position_id, is_active = p_is_active WHERE user_id = p_user_id
-    RETURNING user_id;
-$$;
-
-
--- authenticate by email and password, returns user id or NULL
-CREATE OR REPLACE FUNCTION authenticate(p_email TEXT, p_password TEXT)
-RETURNS UUID
-LANGUAGE sql AS $$
-    SELECT u.user_id FROM users u WHERE u.email = p_email AND u.is_active = TRUE
-    AND u.password_hash = crypt(
-        encode(hmac(p_password, current_setting('app.password_pepper'), 'sha256'), 'base64'), u.password_hash);
-$$;
-
--- create a new user and attributes
-CREATE OR REPLACE FUNCTION add_user(p_daycare_id UUID, p_name TEXT, p_lastname TEXT, p_password TEXT, p_email TEXT, p_role_id UUID, p_position_id UUID, p_is_active BOOLEAN)
-RETURNS UUID
-LANGUAGE sql AS $$
-    INSERT INTO users (daycare_id, name, lastname, password_hash, email, role_id, position_id, is_active)
-    VALUES (p_daycare_id, p_name, p_lastname,
-    crypt(encode(hmac(p_password, current_setting('app.password_pepper'), 'sha256'), 'base64'), gen_salt('bf', 12)),
-    p_email, p_role_id, p_position_id, p_is_active)
     RETURNING user_id;
 $$;
 
