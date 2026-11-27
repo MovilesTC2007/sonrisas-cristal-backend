@@ -6,12 +6,15 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
   api:
+    environment:
+      UV_PROJECT_ENVIRONMENT: /tmp/.venv
+      UV_CACHE_DIR: /tmp/uv-cache
     volumes:
-      - ./api:/app
+      - ./api:/app:ro
     # Direct API access is for local tools and the Android emulator.
     ports:
       - "${API_PORT:-8000}:8000"
-    command: ["sh", "-c", "uv sync && fastapi dev main.py --host 0.0.0.0 --port 8000"]
+    command: ["sh", "-c", "uv sync --locked && uv run fastapi dev main.py --host 0.0.0.0 --port 8000"]
   nginx-tls:
     environment:
       GENERATE_DEV_CERT: "true"

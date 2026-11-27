@@ -11,6 +11,9 @@ Store the password pepper in the file configured by `PASSWORD_PEPPER_FILE`, not
 in `.env`. Keep this file private and stable; changing the pepper prevents
 existing users from authenticating. Compose mounts the file read-only, but it
 remains unencrypted on the host, so restrict access to the file and its backups.
+The API image runs as a non-root user. Compose also applies read-only root
+filesystems, reduced capabilities, and per-service CPU and memory limits; tune
+those limits to the deployment server's capacity.
 
 Development settings are opt-in: the file `compose.dev.yml` is not loaded by
 plain `docker compose up`. Include it explicitly to enable the source mount and
