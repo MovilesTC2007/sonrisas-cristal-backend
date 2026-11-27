@@ -1,7 +1,11 @@
+import logging
+
 import psycopg
 from fastapi import APIRouter, HTTPException
 
 from db import DATABASE_URL
+
+logger = logging.getLogger(__name__)
 
 # Public: used by load balancers/orchestrators before a client ever has a token.
 router = APIRouter(tags=["health"])
@@ -19,8 +23,9 @@ def health_db():
             cur.execute("SELECT 1")
             cur.fetchone()
         return {"status": "ok"}
-    except psycopg.Error as e:
-        raise HTTPException(status_code=503, detail=f"database unreachable: {e}") from e
+    except psycopg.Error:
+        logger.exception("health_db: database unreachable")
+        raise HTTPException(status_code=503, detail="database unreachable") from None
 
 
 REQUIRED_FUNCTIONS = [
@@ -78,7 +83,9 @@ def health_endpoints():
             found = {r[0] for r in cur.fetchall()}
         missing = sorted(set(REQUIRED_FUNCTIONS) - found)
         if missing:
-            raise HTTPException(status_code=503, detail=f"missing functions: {missing}")
+            logger.error("health_endpoints: missing functions: %s", missing)
+            raise HTTPException(status_code=503, detail="missing required database functions")
         return {"status": "ok"}
-    except psycopg.Error as e:
-        raise HTTPException(status_code=503, detail=f"endpoints error: {e}") from e
+    except psycopg.Error:
+        logger.exception("health_endpoints: database error")
+        raise HTTPException(status_code=503, detail="endpoints check failed") from None
