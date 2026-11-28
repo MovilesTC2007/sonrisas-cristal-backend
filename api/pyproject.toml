@@ -8,8 +8,8 @@ dependencies = [
     "python-jose[cryptography]>=3.5.0",
     "oso>=0.27.3",
     "slowapi>=0.1.9",
+    "prometheus-fastapi-instrumentator>=7.0.0",
 ]
-
 [dependency-groups]
 dev = ["pytest>=8.0"]
 
