@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from routers import ALL_ROUTERS
 
@@ -15,3 +16,9 @@ async def security_headers(request: Request, call_next):
 
 for router in ALL_ROUTERS:
     app.include_router(router)
+
+Instrumentator(
+    should_group_status_codes=False,
+    should_ignore_untemplated=False,
+    excluded_handlers=["/metrics"],
+).instrument(app).expose(app, include_in_schema=False)
