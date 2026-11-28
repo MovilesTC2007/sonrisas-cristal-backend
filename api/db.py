@@ -4,19 +4,32 @@ import psycopg
 from fastapi import HTTPException
 from psycopg import errors as pgerr
 from psycopg.rows import dict_row
+from psycopg_pool import ConnectionPool, PoolTimeout
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
+# A pool instead of one new connection per request: a request flood can no
+# longer open unbounded connections against Postgres even if it gets past
+# nginx's rate limiting (defense in depth, see nginx/conf/nginx.conf).
+# min_size=0 means it opens connections lazily -- nothing is attempted until
+# the first real call, which keeps import-time safe wherever DATABASE_URL is
+# a placeholder (tests never call call()/one()/many() at all).
+pool = ConnectionPool(
+    conninfo=DATABASE_URL,
+    min_size=0,
+    max_size=10,
+    kwargs={"row_factory": dict_row, "connect_timeout": 5},
+    open=False,
+)
+
 # Never send these columns to the client, even if a SQL function returns them, defense in depth
-SECRET_FIELDS = {"password_hash"} 
+SECRET_FIELDS = {"password_hash"}
 
 
 def call(fn: str, *args) -> list[dict]:
     placeholders = ", ".join(["%s"] * len(args))
     try:
-        with psycopg.connect(
-            DATABASE_URL, row_factory=dict_row, connect_timeout=5
-        ) as conn, conn.cursor() as cur:
+        with pool.connection() as conn, conn.cursor() as cur:
             cur.execute(f"SELECT * FROM {fn}({placeholders})", args)
             rows = cur.fetchall()
     except pgerr.UniqueViolation as e:
@@ -30,6 +43,8 @@ def call(fn: str, *args) -> list[dict]:
         raise HTTPException(status_code=400, detail="Datos inválidos") from e
     except pgerr.RaiseException as e:
         raise HTTPException(status_code=400, detail=e.diag.message_primary or "Solicitud rechazada") from e
+    except PoolTimeout as e:
+        raise HTTPException(status_code=503, detail="Base de datos no disponible") from e
     except psycopg.OperationalError as e:
         raise HTTPException(status_code=503, detail="Base de datos no disponible") from e
     except psycopg.Error as e:
