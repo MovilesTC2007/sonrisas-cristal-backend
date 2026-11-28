@@ -49,10 +49,6 @@ SELECT d.daycare_id, 'ABC123', r.role_id, p.position_id, 'Lucía', 'Torres', TRU
 FROM daycare d, roles r, positions p
 WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'staff' AND p.description = 'profesor'
 UNION ALL
-SELECT d.daycare_id, 'ADM001', r.role_id, p.position_id, 'Andrés', 'Mendoza', TRUE, now() + INTERVAL '7 days'
-FROM daycare d, roles r, positions p
-WHERE d.name = 'Sonrisas Cristal - Apodaca' AND r.description = 'director' AND p.description = 'director'
-UNION ALL
 SELECT d.daycare_id, 'NORTE1', r.role_id, p.position_id, 'Valeria', 'Cruz', TRUE, now() + INTERVAL '30 days'
 FROM daycare d, roles r, positions p
 WHERE d.name = 'Sonrisas Cristal - Norte' AND r.description = 'staff' AND p.description = 'asistente';

@@ -2,9 +2,10 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from db import one
+from rate_limit import limiter
 from schemas import InvitationIn, LoginIn, LoginOut, RedeemIn
 from security import (
     InvitationCodeResource,
@@ -23,7 +24,8 @@ INVITATION_VALIDITY = timedelta(days=3)
 
 
 @router.post("/login", response_model=LoginOut)
-def login(body: LoginIn):
+@limiter.limit("5/minute")
+def login(request: Request, body: LoginIn):
     user_id = one("authenticate", body.email, body.password, status=401, detail="Credenciales inválidas")["authenticate"]
     user = one("get_user_by_id", user_id)
     token = create_access_token({"sub": str(user_id)})
@@ -54,7 +56,8 @@ def create_invitation(body: InvitationIn, requester: RequesterDep):
     )
 
 @invitations_router.post("/redeem", status_code=201)
-def redeem_invitation(body: RedeemIn):
+@limiter.limit("5/minute")
+def redeem_invitation(request: Request, body: RedeemIn):
     row = one(
         "redeem_invitation_code",
         body.code, body.email.lower(), body.password,
