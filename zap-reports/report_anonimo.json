@@ -1,8 +1,8 @@
 {
 	"@programName": "ZAP",
 	"@version": "2.17.0",
-	"@generated": "Sat, 28 Nov 2026 04:34:35",
-	"created": "2026-11-28T04:34:35.873096179Z",
+	"@generated": "Sat, 28 Nov 2026 05:12:45",
+	"created": "2026-11-28T05:12:45.549239047Z",
 	"insights":[
 		{
 			"level": "Medium",
@@ -18,7 +18,7 @@
 			"site": "http://api:8000",
 			"key": "insight.code.2xx",
 			"description": "Percentage of responses with status code 2xx",
-			"statistic": "12"
+			"statistic": "100"
 		},
 		{
 			"level": "Info",
@@ -34,7 +34,7 @@
 			"site": "http://api:8000",
 			"key": "insight.endpoint.method.GET",
 			"description": "Percentage of endpoints with method GET",
-			"statistic": "73"
+			"statistic": "74"
 		},
 		{
 			"level": "Info",
@@ -42,7 +42,7 @@
 			"site": "http://api:8000",
 			"key": "insight.endpoint.method.POST",
 			"description": "Percentage of endpoints with method POST",
-			"statistic": "14"
+			"statistic": "13"
 		},
 		{
 			"level": "Info",
@@ -58,7 +58,15 @@
 			"site": "http://api:8000",
 			"key": "insight.endpoint.total",
 			"description": "Count of total endpoints",
-			"statistic": "138"
+			"statistic": "135"
+		},
+		{
+			"level": "Info",
+			"reason": "Exceeded Low",
+			"site": "http://api:8000",
+			"key": "insight.response.slow",
+			"description": "Percentage of slow responses",
+			"statistic": "7"
 		}
 	],
 	"site":[ 
@@ -79,9 +87,9 @@
 					"desc": "<p>A response code of 404 was returned by the server.</p><p>This may indicate that the application is failing to handle unexpected input correctly.</p><p>Raised by the 'Alert on HTTP Response Code Error' script</p>",
 					"instances":[ 
 						{
-							"id": "61",
-							"uri": "http://api:8000/4296724017053370110",
-							"nodeName": "http:\/\/api:8000\/4296724017053370110",
+							"id": "55",
+							"uri": "http://api:8000/8312612614875497416",
+							"nodeName": "http:\/\/api:8000\/8312612614875497416",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -89,7 +97,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "8920",
+							"id": "8912",
 							"uri": "http://api:8000/actuator/health",
 							"nodeName": "http:\/\/api:8000\/actuator\/health",
 							"method": "GET",
@@ -99,7 +107,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "79",
+							"id": "80",
 							"uri": "http://api:8000/areas",
 							"nodeName": "http:\/\/api:8000\/areas",
 							"method": "GET",
@@ -109,7 +117,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7889",
+							"id": "7878",
 							"uri": "http://api:8000/areas/",
 							"nodeName": "http:\/\/api:8000\/areas\/",
 							"method": "GET",
@@ -119,9 +127,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "62",
-							"uri": "http://api:8000/areas/6987147823356898962",
-							"nodeName": "http:\/\/api:8000\/areas\/6987147823356898962",
+							"id": "56",
+							"uri": "http://api:8000/areas/3682604507644915344",
+							"nodeName": "http:\/\/api:8000\/areas\/3682604507644915344",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -129,7 +137,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "16",
+							"id": "17",
 							"uri": "http://api:8000/areas/area_id",
 							"nodeName": "http:\/\/api:8000\/areas\/area_id",
 							"method": "GET",
@@ -139,7 +147,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7894",
+							"id": "7879",
 							"uri": "http://api:8000/areas/area_id/",
 							"nodeName": "http:\/\/api:8000\/areas\/area_id\/",
 							"method": "GET",
@@ -149,9 +157,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "63",
-							"uri": "http://api:8000/areas/area_id/1963896564905793157",
-							"nodeName": "http:\/\/api:8000\/areas\/area_id\/1963896564905793157",
+							"id": "57",
+							"uri": "http://api:8000/areas/area_id/6668733545833817532",
+							"nodeName": "http:\/\/api:8000\/areas\/area_id\/6668733545833817532",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -159,7 +167,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "19",
+							"id": "20",
 							"uri": "http://api:8000/areas/area_id/personnel",
 							"nodeName": "http:\/\/api:8000\/areas\/area_id\/personnel",
 							"method": "GET",
@@ -169,7 +177,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7890",
+							"id": "7881",
 							"uri": "http://api:8000/areas/area_id/personnel/",
 							"nodeName": "http:\/\/api:8000\/areas\/area_id\/personnel\/",
 							"method": "GET",
@@ -179,7 +187,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "89",
+							"id": "90",
 							"uri": "http://api:8000/attendance",
 							"nodeName": "http:\/\/api:8000\/attendance",
 							"method": "GET",
@@ -189,7 +197,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7895",
+							"id": "7883",
 							"uri": "http://api:8000/attendance/",
 							"nodeName": "http:\/\/api:8000\/attendance\/",
 							"method": "GET",
@@ -199,9 +207,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "64",
-							"uri": "http://api:8000/attendance/7702321375682084970",
-							"nodeName": "http:\/\/api:8000\/attendance\/7702321375682084970",
+							"id": "58",
+							"uri": "http://api:8000/attendance/122705991430301669",
+							"nodeName": "http:\/\/api:8000\/attendance\/122705991430301669",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -219,7 +227,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7891",
+							"id": "7885",
 							"uri": "http://api:8000/auth/",
 							"nodeName": "http:\/\/api:8000\/auth\/",
 							"method": "GET",
@@ -229,9 +237,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "65",
-							"uri": "http://api:8000/auth/5798990235553964586",
-							"nodeName": "http:\/\/api:8000\/auth\/5798990235553964586",
+							"id": "59",
+							"uri": "http://api:8000/auth/3774487131100300666",
+							"nodeName": "http:\/\/api:8000\/auth\/3774487131100300666",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -239,7 +247,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "5878",
+							"id": "5868",
 							"uri": "http://api:8000/computeMetadata/v1/",
 							"nodeName": "http:\/\/api:8000\/computeMetadata\/v1\/",
 							"method": "GET",
@@ -249,7 +257,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "119",
+							"id": "113",
 							"uri": "http://api:8000/daycares",
 							"nodeName": "http:\/\/api:8000\/daycares",
 							"method": "GET",
@@ -259,7 +267,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7900",
+							"id": "7894",
 							"uri": "http://api:8000/daycares/",
 							"nodeName": "http:\/\/api:8000\/daycares\/",
 							"method": "GET",
@@ -269,9 +277,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "66",
-							"uri": "http://api:8000/daycares/2543542331869332090",
-							"nodeName": "http:\/\/api:8000\/daycares\/2543542331869332090",
+							"id": "60",
+							"uri": "http://api:8000/daycares/7600275917685868373",
+							"nodeName": "http:\/\/api:8000\/daycares\/7600275917685868373",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -279,7 +287,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "6",
+							"id": "7",
 							"uri": "http://api:8000/daycares/daycare_id",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id",
 							"method": "GET",
@@ -289,7 +297,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7901",
+							"id": "7893",
 							"uri": "http://api:8000/daycares/daycare_id/",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/",
 							"method": "GET",
@@ -299,9 +307,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "67",
-							"uri": "http://api:8000/daycares/daycare_id/2797209217111222603",
-							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/2797209217111222603",
+							"id": "61",
+							"uri": "http://api:8000/daycares/daycare_id/4318583263730859361",
+							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/4318583263730859361",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -309,7 +317,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "10",
+							"id": "11",
 							"uri": "http://api:8000/daycares/daycare_id/areas",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/areas",
 							"method": "GET",
@@ -319,7 +327,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7903",
+							"id": "7892",
 							"uri": "http://api:8000/daycares/daycare_id/areas/",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/areas\/",
 							"method": "GET",
@@ -329,7 +337,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "132",
+							"id": "121",
 							"uri": "http://api:8000/daycares/daycare_id/attendance",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/attendance",
 							"method": "GET",
@@ -339,7 +347,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "14",
+							"id": "15",
 							"uri": "http://api:8000/daycares/daycare_id/attendance?date=date",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/attendance (date)",
 							"method": "GET",
@@ -349,7 +357,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7906",
+							"id": "7902",
 							"uri": "http://api:8000/daycares/daycare_id/attendance/",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/attendance\/",
 							"method": "GET",
@@ -359,9 +367,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "68",
-							"uri": "http://api:8000/daycares/daycare_id/attendance/7361099788352106656",
-							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/attendance\/7361099788352106656",
+							"id": "62",
+							"uri": "http://api:8000/daycares/daycare_id/attendance/5499336161567588298",
+							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/attendance\/5499336161567588298",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -369,7 +377,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7905",
+							"id": "7897",
 							"uri": "http://api:8000/daycares/daycare_id/attendance/current",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/attendance\/current",
 							"method": "GET",
@@ -379,7 +387,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "15",
+							"id": "16",
 							"uri": "http://api:8000/daycares/daycare_id/attendance/current?at=",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/attendance\/current (at)",
 							"method": "GET",
@@ -389,7 +397,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7907",
+							"id": "7903",
 							"uri": "http://api:8000/daycares/daycare_id/attendance/current/",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/attendance\/current\/",
 							"method": "GET",
@@ -399,7 +407,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "11",
+							"id": "12",
 							"uri": "http://api:8000/daycares/daycare_id/history",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/history",
 							"method": "GET",
@@ -409,7 +417,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7914",
+							"id": "7906",
 							"uri": "http://api:8000/daycares/daycare_id/history/",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/history\/",
 							"method": "GET",
@@ -419,7 +427,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "9",
+							"id": "10",
 							"uri": "http://api:8000/daycares/daycare_id/personnel",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/personnel",
 							"method": "GET",
@@ -429,7 +437,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7913",
+							"id": "7901",
 							"uri": "http://api:8000/daycares/daycare_id/personnel/",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/personnel\/",
 							"method": "GET",
@@ -439,7 +447,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "141",
+							"id": "139",
 							"uri": "http://api:8000/daycares/daycare_id/shifts",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/shifts",
 							"method": "GET",
@@ -449,7 +457,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12",
+							"id": "13",
 							"uri": "http://api:8000/daycares/daycare_id/shifts?date=date",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/shifts (date)",
 							"method": "GET",
@@ -459,7 +467,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7919",
+							"id": "7911",
 							"uri": "http://api:8000/daycares/daycare_id/shifts/",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/shifts\/",
 							"method": "GET",
@@ -469,9 +477,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "69",
-							"uri": "http://api:8000/daycares/daycare_id/shifts/5349020898484880810",
-							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/shifts\/5349020898484880810",
+							"id": "63",
+							"uri": "http://api:8000/daycares/daycare_id/shifts/9030265986604500633",
+							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/shifts\/9030265986604500633",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -479,7 +487,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7915",
+							"id": "7907",
 							"uri": "http://api:8000/daycares/daycare_id/shifts/at",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/shifts\/at",
 							"method": "GET",
@@ -489,7 +497,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "13",
+							"id": "14",
 							"uri": "http://api:8000/daycares/daycare_id/shifts/at?at=",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/shifts\/at (at)",
 							"method": "GET",
@@ -499,7 +507,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7916",
+							"id": "7913",
 							"uri": "http://api:8000/daycares/daycare_id/shifts/at/",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/shifts\/at\/",
 							"method": "GET",
@@ -509,7 +517,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "154",
+							"id": "158",
 							"uri": "http://api:8000/health",
 							"nodeName": "http:\/\/api:8000\/health",
 							"method": "GET",
@@ -519,7 +527,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7921",
+							"id": "7908",
 							"uri": "http://api:8000/health/",
 							"nodeName": "http:\/\/api:8000\/health\/",
 							"method": "GET",
@@ -529,9 +537,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "70",
-							"uri": "http://api:8000/health/6500080003538268545",
-							"nodeName": "http:\/\/api:8000\/health\/6500080003538268545",
+							"id": "64",
+							"uri": "http://api:8000/health/5627386080618547227",
+							"nodeName": "http:\/\/api:8000\/health\/5627386080618547227",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -539,7 +547,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "173",
+							"id": "164",
 							"uri": "http://api:8000/invitations",
 							"nodeName": "http:\/\/api:8000\/invitations",
 							"method": "GET",
@@ -549,7 +557,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7926",
+							"id": "7917",
 							"uri": "http://api:8000/invitations/",
 							"nodeName": "http:\/\/api:8000\/invitations\/",
 							"method": "GET",
@@ -559,9 +567,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "71",
-							"uri": "http://api:8000/invitations/3099404851923717074",
-							"nodeName": "http:\/\/api:8000\/invitations\/3099404851923717074",
+							"id": "65",
+							"uri": "http://api:8000/invitations/8583866674372295349",
+							"nodeName": "http:\/\/api:8000\/invitations\/8583866674372295349",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -569,7 +577,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "5856",
+							"id": "5850",
 							"uri": "http://api:8000/latest/meta-data/",
 							"nodeName": "http:\/\/api:8000\/latest\/meta-data\/",
 							"method": "GET",
@@ -579,7 +587,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "5996",
+							"id": "5962",
 							"uri": "http://api:8000/metadata/instance",
 							"nodeName": "http:\/\/api:8000\/metadata\/instance",
 							"method": "GET",
@@ -589,7 +597,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "6007",
+							"id": "5984",
 							"uri": "http://api:8000/metadata/v1",
 							"nodeName": "http:\/\/api:8000\/metadata\/v1",
 							"method": "GET",
@@ -599,7 +607,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "5899",
+							"id": "5890",
 							"uri": "http://api:8000/opc/v1/instance/",
 							"nodeName": "http:\/\/api:8000\/opc\/v1\/instance\/",
 							"method": "GET",
@@ -609,7 +617,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "5926",
+							"id": "5912",
 							"uri": "http://api:8000/opc/v2/instance/",
 							"nodeName": "http:\/\/api:8000\/opc\/v2\/instance\/",
 							"method": "GET",
@@ -619,7 +627,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "6027",
+							"id": "6005",
 							"uri": "http://api:8000/openstack/latest/meta_data.json",
 							"nodeName": "http:\/\/api:8000\/openstack\/latest\/meta_data.json",
 							"method": "GET",
@@ -629,7 +637,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "187",
+							"id": "184",
 							"uri": "http://api:8000/personnel-history",
 							"nodeName": "http:\/\/api:8000\/personnel-history",
 							"method": "GET",
@@ -639,7 +647,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7929",
+							"id": "7921",
 							"uri": "http://api:8000/personnel-history/",
 							"nodeName": "http:\/\/api:8000\/personnel-history\/",
 							"method": "GET",
@@ -649,9 +657,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "72",
-							"uri": "http://api:8000/personnel-history/8980964083875326369",
-							"nodeName": "http:\/\/api:8000\/personnel-history\/8980964083875326369",
+							"id": "66",
+							"uri": "http://api:8000/personnel-history/6096832632403927902",
+							"nodeName": "http:\/\/api:8000\/personnel-history\/6096832632403927902",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -659,7 +667,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "40",
+							"id": "53",
 							"uri": "http://api:8000/personnel-history/history_id",
 							"nodeName": "http:\/\/api:8000\/personnel-history\/history_id",
 							"method": "GET",
@@ -669,7 +677,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7930",
+							"id": "7922",
 							"uri": "http://api:8000/personnel-history/history_id/",
 							"nodeName": "http:\/\/api:8000\/personnel-history\/history_id\/",
 							"method": "GET",
@@ -679,7 +687,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "198",
+							"id": "189",
 							"uri": "http://api:8000/positions",
 							"nodeName": "http:\/\/api:8000\/positions",
 							"method": "GET",
@@ -689,7 +697,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7931",
+							"id": "7923",
 							"uri": "http://api:8000/positions/",
 							"nodeName": "http:\/\/api:8000\/positions\/",
 							"method": "GET",
@@ -699,9 +707,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "73",
-							"uri": "http://api:8000/positions/5960513093839863461",
-							"nodeName": "http:\/\/api:8000\/positions\/5960513093839863461",
+							"id": "67",
+							"uri": "http://api:8000/positions/6663471329654572022",
+							"nodeName": "http:\/\/api:8000\/positions\/6663471329654572022",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -709,7 +717,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "5",
+							"id": "6",
 							"uri": "http://api:8000/positions/position_id",
 							"nodeName": "http:\/\/api:8000\/positions\/position_id",
 							"method": "GET",
@@ -719,7 +727,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7934",
+							"id": "7926",
 							"uri": "http://api:8000/positions/position_id/",
 							"nodeName": "http:\/\/api:8000\/positions\/position_id\/",
 							"method": "GET",
@@ -729,7 +737,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "210",
+							"id": "209",
 							"uri": "http://api:8000/requests",
 							"nodeName": "http:\/\/api:8000\/requests",
 							"method": "GET",
@@ -739,7 +747,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7941",
+							"id": "7931",
 							"uri": "http://api:8000/requests/",
 							"nodeName": "http:\/\/api:8000\/requests\/",
 							"method": "GET",
@@ -749,9 +757,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "74",
-							"uri": "http://api:8000/requests/6818732869075153868",
-							"nodeName": "http:\/\/api:8000\/requests\/6818732869075153868",
+							"id": "68",
+							"uri": "http://api:8000/requests/2330725004056248606",
+							"nodeName": "http:\/\/api:8000\/requests\/2330725004056248606",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -759,7 +767,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "29",
+							"id": "44",
 							"uri": "http://api:8000/requests/request_id",
 							"nodeName": "http:\/\/api:8000\/requests\/request_id",
 							"method": "GET",
@@ -769,7 +777,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7939",
+							"id": "7930",
 							"uri": "http://api:8000/requests/request_id/",
 							"nodeName": "http:\/\/api:8000\/requests\/request_id\/",
 							"method": "GET",
@@ -779,7 +787,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "227",
+							"id": "220",
 							"uri": "http://api:8000/roles",
 							"nodeName": "http:\/\/api:8000\/roles",
 							"method": "GET",
@@ -789,7 +797,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7940",
+							"id": "7933",
 							"uri": "http://api:8000/roles/",
 							"nodeName": "http:\/\/api:8000\/roles\/",
 							"method": "GET",
@@ -799,9 +807,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "75",
-							"uri": "http://api:8000/roles/1274274352589601922",
-							"nodeName": "http:\/\/api:8000\/roles\/1274274352589601922",
+							"id": "69",
+							"uri": "http://api:8000/roles/3701569655792834155",
+							"nodeName": "http:\/\/api:8000\/roles\/3701569655792834155",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -809,7 +817,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "4",
+							"id": "5",
 							"uri": "http://api:8000/roles/role_id",
 							"nodeName": "http:\/\/api:8000\/roles\/role_id",
 							"method": "GET",
@@ -819,7 +827,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7943",
+							"id": "7935",
 							"uri": "http://api:8000/roles/role_id/",
 							"nodeName": "http:\/\/api:8000\/roles\/role_id\/",
 							"method": "GET",
@@ -829,7 +837,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "240",
+							"id": "239",
 							"uri": "http://api:8000/shifts",
 							"nodeName": "http:\/\/api:8000\/shifts",
 							"method": "GET",
@@ -839,7 +847,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7948",
+							"id": "7940",
 							"uri": "http://api:8000/shifts/",
 							"nodeName": "http:\/\/api:8000\/shifts\/",
 							"method": "GET",
@@ -849,9 +857,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "76",
-							"uri": "http://api:8000/shifts/950477495609596813",
-							"nodeName": "http:\/\/api:8000\/shifts\/950477495609596813",
+							"id": "70",
+							"uri": "http://api:8000/shifts/2874305526349299920",
+							"nodeName": "http:\/\/api:8000\/shifts\/2874305526349299920",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -859,7 +867,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "32",
+							"id": "47",
 							"uri": "http://api:8000/shifts/shift_id",
 							"nodeName": "http:\/\/api:8000\/shifts\/shift_id",
 							"method": "GET",
@@ -869,7 +877,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7946",
+							"id": "7939",
 							"uri": "http://api:8000/shifts/shift_id/",
 							"nodeName": "http:\/\/api:8000\/shifts\/shift_id\/",
 							"method": "GET",
@@ -879,7 +887,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "259",
+							"id": "254",
 							"uri": "http://api:8000/users",
 							"nodeName": "http:\/\/api:8000\/users",
 							"method": "GET",
@@ -889,7 +897,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7949",
+							"id": "7941",
 							"uri": "http://api:8000/users/",
 							"nodeName": "http:\/\/api:8000\/users\/",
 							"method": "GET",
@@ -899,9 +907,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "77",
-							"uri": "http://api:8000/users/8415795243229389805",
-							"nodeName": "http:\/\/api:8000\/users\/8415795243229389805",
+							"id": "71",
+							"uri": "http://api:8000/users/6107458190095282341",
+							"nodeName": "http:\/\/api:8000\/users\/6107458190095282341",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -909,7 +917,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "20",
+							"id": "35",
 							"uri": "http://api:8000/users/me",
 							"nodeName": "http:\/\/api:8000\/users\/me",
 							"method": "GET",
@@ -919,7 +927,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7951",
+							"id": "7943",
 							"uri": "http://api:8000/users/me/",
 							"nodeName": "http:\/\/api:8000\/users\/me\/",
 							"method": "GET",
@@ -929,7 +937,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "21",
+							"id": "36",
 							"uri": "http://api:8000/users/user_id",
 							"nodeName": "http:\/\/api:8000\/users\/user_id",
 							"method": "GET",
@@ -939,7 +947,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7958",
+							"id": "7952",
 							"uri": "http://api:8000/users/user_id/",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/",
 							"method": "GET",
@@ -949,9 +957,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "78",
-							"uri": "http://api:8000/users/user_id/1844402263385488309",
-							"nodeName": "http:\/\/api:8000\/users\/user_id\/1844402263385488309",
+							"id": "72",
+							"uri": "http://api:8000/users/user_id/2109403931868575804",
+							"nodeName": "http:\/\/api:8000\/users\/user_id\/2109403931868575804",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -959,7 +967,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "25",
+							"id": "40",
 							"uri": "http://api:8000/users/user_id/attendance",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/attendance",
 							"method": "GET",
@@ -969,7 +977,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7959",
+							"id": "7949",
 							"uri": "http://api:8000/users/user_id/attendance/",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/attendance\/",
 							"method": "GET",
@@ -979,7 +987,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "27",
+							"id": "42",
 							"uri": "http://api:8000/users/user_id/history",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/history",
 							"method": "GET",
@@ -989,7 +997,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7963",
+							"id": "7955",
 							"uri": "http://api:8000/users/user_id/history/",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/history\/",
 							"method": "GET",
@@ -999,7 +1007,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "26",
+							"id": "41",
 							"uri": "http://api:8000/users/user_id/requests",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/requests",
 							"method": "GET",
@@ -1009,7 +1017,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7960",
+							"id": "7948",
 							"uri": "http://api:8000/users/user_id/requests/",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/requests\/",
 							"method": "GET",
@@ -1019,7 +1027,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "24",
+							"id": "39",
 							"uri": "http://api:8000/users/user_id/shifts",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/shifts",
 							"method": "GET",
@@ -1029,7 +1037,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7961",
+							"id": "7953",
 							"uri": "http://api:8000/users/user_id/shifts/",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/shifts\/",
 							"method": "GET",
@@ -1039,7 +1047,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "28",
+							"id": "43",
 							"uri": "http://api:8000/users/user_id/status",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/status",
 							"method": "GET",
@@ -1049,7 +1057,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7962",
+							"id": "7954",
 							"uri": "http://api:8000/users/user_id/status/",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/status\/",
 							"method": "GET",
@@ -1059,7 +1067,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "18",
+							"id": "19",
 							"uri": "http://api:8000/areas",
 							"nodeName": "http:\/\/api:8000\/areas ()({daycare_id,name,minimum_active_staff})",
 							"method": "POST",
@@ -1069,7 +1077,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7851",
+							"id": "7849",
 							"uri": "http://api:8000/areas/",
 							"nodeName": "http:\/\/api:8000\/areas\/ ()({daycare_id,name,minimum_active_staff})",
 							"method": "POST",
@@ -1079,7 +1087,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "35",
+							"id": "50",
 							"uri": "http://api:8000/attendance",
 							"nodeName": "http:\/\/api:8000\/attendance ()({user_id,shift_id,attendance_date,check_in,status,notes,uuid})",
 							"method": "POST",
@@ -1089,7 +1097,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7857",
+							"id": "7853",
 							"uri": "http://api:8000/attendance/",
 							"nodeName": "http:\/\/api:8000\/attendance\/ ()({user_id,shift_id,attendance_date,check_in,status,notes,uuid})",
 							"method": "POST",
@@ -1099,7 +1107,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "0",
+							"id": "2",
 							"uri": "http://api:8000/auth/login",
 							"nodeName": "http:\/\/api:8000\/auth\/login ()({email,password})",
 							"method": "POST",
@@ -1109,7 +1117,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7010",
+							"id": "6977",
 							"uri": "http://api:8000/auth/login",
 							"nodeName": "http:\/\/api:8000\/auth\/login ()({email,password})",
 							"method": "POST",
@@ -1119,7 +1127,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7883",
+							"id": "7887",
 							"uri": "http://api:8000/auth/login/",
 							"nodeName": "http:\/\/api:8000\/auth\/login\/ ()({email,password})",
 							"method": "POST",
@@ -1129,27 +1137,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "1",
-							"uri": "http://api:8000/auth/logout",
-							"nodeName": "http:\/\/api:8000\/auth\/logout",
-							"method": "POST",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "7848",
-							"uri": "http://api:8000/auth/logout/",
-							"nodeName": "http:\/\/api:8000\/auth\/logout\/",
-							"method": "POST",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "8",
+							"id": "9",
 							"uri": "http://api:8000/daycares",
 							"nodeName": "http:\/\/api:8000\/daycares ()({name,address,low_delay,medium_delay,absence})",
 							"method": "POST",
@@ -1159,7 +1147,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7865",
+							"id": "7856",
 							"uri": "http://api:8000/daycares/",
 							"nodeName": "http:\/\/api:8000\/daycares\/ ()({name,address,low_delay,medium_delay,absence})",
 							"method": "POST",
@@ -1169,7 +1157,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "2",
+							"id": "3",
 							"uri": "http://api:8000/invitations",
 							"nodeName": "http:\/\/api:8000\/invitations ()({daycare_id,role_id,position_id,name,lastname,is_active})",
 							"method": "POST",
@@ -1179,7 +1167,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7872",
+							"id": "7857",
 							"uri": "http://api:8000/invitations/",
 							"nodeName": "http:\/\/api:8000\/invitations\/ ()({daycare_id,role_id,position_id,name,lastname,is_active})",
 							"method": "POST",
@@ -1189,7 +1177,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "1877",
+							"id": "1872",
 							"uri": "http://api:8000/invitations/redeem",
 							"nodeName": "http:\/\/api:8000\/invitations\/redeem ()({code,email,password})",
 							"method": "POST",
@@ -1199,7 +1187,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "3",
+							"id": "4",
 							"uri": "http://api:8000/invitations/redeem",
 							"nodeName": "http:\/\/api:8000\/invitations\/redeem ()({code,email,password})",
 							"method": "POST",
@@ -1209,7 +1197,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7863",
+							"id": "7858",
 							"uri": "http://api:8000/invitations/redeem/",
 							"nodeName": "http:\/\/api:8000\/invitations\/redeem\/ ()({code,email,password})",
 							"method": "POST",
@@ -1219,7 +1207,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "39",
+							"id": "52",
 							"uri": "http://api:8000/personnel-history",
 							"nodeName": "http:\/\/api:8000\/personnel-history ()({user_id,action,action_date,notes})",
 							"method": "POST",
@@ -1229,7 +1217,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7882",
+							"id": "7861",
 							"uri": "http://api:8000/personnel-history/",
 							"nodeName": "http:\/\/api:8000\/personnel-history\/ ()({user_id,action,action_date,notes})",
 							"method": "POST",
@@ -1239,7 +1227,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "31",
+							"id": "46",
 							"uri": "http://api:8000/requests",
 							"nodeName": "http:\/\/api:8000\/requests ()({user_id,type,request_date,notes})",
 							"method": "POST",
@@ -1249,7 +1237,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7874",
+							"id": "7869",
 							"uri": "http://api:8000/requests/",
 							"nodeName": "http:\/\/api:8000\/requests\/ ()({user_id,type,request_date,notes})",
 							"method": "POST",
@@ -1259,7 +1247,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "34",
+							"id": "49",
 							"uri": "http://api:8000/shifts",
 							"nodeName": "http:\/\/api:8000\/shifts ()({user_id,area_id,entry_hour,exit_hour,workday,valid_from,valid_until,is_active,request_id})",
 							"method": "POST",
@@ -1269,7 +1257,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7876",
+							"id": "7872",
 							"uri": "http://api:8000/shifts/",
 							"nodeName": "http:\/\/api:8000\/shifts\/ ()({user_id,area_id,entry_hour,exit_hour,workday,valid_from,valid_until,is_active,request_id})",
 							"method": "POST",
@@ -1279,7 +1267,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "17",
+							"id": "18",
 							"uri": "http://api:8000/areas/area_id",
 							"nodeName": "http:\/\/api:8000\/areas\/area_id ()({name,minimum_active_staff})",
 							"method": "PUT",
@@ -1289,7 +1277,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7853",
+							"id": "7868",
 							"uri": "http://api:8000/areas/area_id/",
 							"nodeName": "http:\/\/api:8000\/areas\/area_id\/ ()({name,minimum_active_staff})",
 							"method": "PUT",
@@ -1299,7 +1287,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "36",
+							"id": "51",
 							"uri": "http://api:8000/attendance/attendance_id",
 							"nodeName": "http:\/\/api:8000\/attendance\/attendance_id ()({check_in,check_out,status,notes})",
 							"method": "PUT",
@@ -1309,7 +1297,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7880",
+							"id": "7851",
 							"uri": "http://api:8000/attendance/attendance_id/",
 							"nodeName": "http:\/\/api:8000\/attendance\/attendance_id\/ ()({check_in,check_out,status,notes})",
 							"method": "PUT",
@@ -1319,7 +1307,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7",
+							"id": "8",
 							"uri": "http://api:8000/daycares/daycare_id",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id ()({name,address,low_delay,medium_delay,absence})",
 							"method": "PUT",
@@ -1329,7 +1317,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7859",
+							"id": "7850",
 							"uri": "http://api:8000/daycares/daycare_id/",
 							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/ ()({name,address,low_delay,medium_delay,absence})",
 							"method": "PUT",
@@ -1339,7 +1327,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "41",
+							"id": "54",
 							"uri": "http://api:8000/personnel-history/history_id",
 							"nodeName": "http:\/\/api:8000\/personnel-history\/history_id ()({action,action_date,notes})",
 							"method": "PUT",
@@ -1349,7 +1337,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7871",
+							"id": "7860",
 							"uri": "http://api:8000/personnel-history/history_id/",
 							"nodeName": "http:\/\/api:8000\/personnel-history\/history_id\/ ()({action,action_date,notes})",
 							"method": "PUT",
@@ -1359,7 +1347,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "30",
+							"id": "45",
 							"uri": "http://api:8000/requests/request_id",
 							"nodeName": "http:\/\/api:8000\/requests\/request_id ()({status,notes})",
 							"method": "PUT",
@@ -1369,7 +1357,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7873",
+							"id": "7862",
 							"uri": "http://api:8000/requests/request_id/",
 							"nodeName": "http:\/\/api:8000\/requests\/request_id\/ ()({status,notes})",
 							"method": "PUT",
@@ -1379,7 +1367,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "33",
+							"id": "48",
 							"uri": "http://api:8000/shifts/shift_id",
 							"nodeName": "http:\/\/api:8000\/shifts\/shift_id ()({user_id,area_id,entry_hour,exit_hour,workday,valid_from,valid_until,is_active,request_id})",
 							"method": "PUT",
@@ -1389,7 +1377,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7875",
+							"id": "7871",
 							"uri": "http://api:8000/shifts/shift_id/",
 							"nodeName": "http:\/\/api:8000\/shifts\/shift_id\/ ()({user_id,area_id,entry_hour,exit_hour,workday,valid_from,valid_until,is_active,request_id})",
 							"method": "PUT",
@@ -1399,7 +1387,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "22",
+							"id": "37",
 							"uri": "http://api:8000/users/user_id",
 							"nodeName": "http:\/\/api:8000\/users\/user_id ()({name,lastname,email,position_id,is_active})",
 							"method": "PUT",
@@ -1409,7 +1397,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7877",
+							"id": "7873",
 							"uri": "http://api:8000/users/user_id/",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/ ()({name,lastname,email,position_id,is_active})",
 							"method": "PUT",
@@ -1419,7 +1407,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "23",
+							"id": "38",
 							"uri": "http://api:8000/users/user_id/role",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/role ()({role_id,daycare_id})",
 							"method": "PUT",
@@ -1429,7 +1417,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7878",
+							"id": "7870",
 							"uri": "http://api:8000/users/user_id/role/",
 							"nodeName": "http:\/\/api:8000\/users\/user_id\/role\/ ()({role_id,daycare_id})",
 							"method": "PUT",
@@ -1439,14 +1427,14 @@
 							"otherinfo": ""
 						}
 					],
-					"count": "136",
+					"count": "134",
 					"systemic": false,
 					"solution": "",
 					"otherinfo": "",
 					"reference": "",
 					"cweid": "388",
 					"wascid": "20",
-					"sourceid": "63"
+					"sourceid": "61"
 				},
 				{
 					"pluginid": "10111",
@@ -1459,7 +1447,7 @@
 					"desc": "<p>The given request has been identified as an authentication request. The 'Other Info' field contains a set of key=value lines which identify any relevant fields. If the request is in a context which has an Authentication Method set to \"Auto-Detect\" then this rule will change the authentication to match the request identified.</p>",
 					"instances":[ 
 						{
-							"id": "38",
+							"id": "23",
 							"uri": "http://api:8000/invitations/redeem",
 							"nodeName": "http:\/\/api:8000\/invitations\/redeem ()({code,email,password})",
 							"method": "POST",
@@ -1469,7 +1457,7 @@
 							"otherinfo": "userParam=email\nuserValue=zaproxy@example.com\npasswordParam=password"
 						},
 						{
-							"id": "37",
+							"id": "22",
 							"uri": "http://api:8000/auth/login",
 							"nodeName": "http:\/\/api:8000\/auth\/login ()({email,password})",
 							"method": "POST",
@@ -1486,7 +1474,7 @@
 					"reference": "<p>https://www.zaproxy.org/docs/desktop/addons/authentication-helper/auth-req-id/</p>",
 					"cweid": "-1",
 					"wascid": "-1",
-					"sourceid": "11"
+					"sourceid": "9"
 				},
 				{
 					"pluginid": "10049",
@@ -1499,9 +1487,9 @@
 					"desc": "<p>The response contents are not storable by caching components such as proxy servers. If the response does not contain sensitive, personal or user-specific information, it may benefit from being stored and cached, to improve performance.</p>",
 					"instances":[ 
 						{
-							"id": "49",
-							"uri": "http://api:8000/daycares/daycare_id/areas",
-							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/areas",
+							"id": "28",
+							"uri": "http://api:8000/positions/position_id",
+							"nodeName": "http:\/\/api:8000\/positions\/position_id",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -1509,17 +1497,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "46",
-							"uri": "http://api:8000/daycares/daycare_id/shifts/at?at=",
-							"nodeName": "http:\/\/api:8000\/daycares\/daycare_id\/shifts\/at (at)",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "44",
+							"id": "26",
 							"uri": "http://api:8000/roles/role_id",
 							"nodeName": "http:\/\/api:8000\/roles\/role_id",
 							"method": "GET",
@@ -1529,7 +1507,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "47",
+							"id": "24",
 							"uri": "http://api:8000/auth/login",
 							"nodeName": "http:\/\/api:8000\/auth\/login ()({email,password})",
 							"method": "POST",
@@ -1539,13 +1517,23 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "48",
-							"uri": "http://api:8000/daycares",
-							"nodeName": "http:\/\/api:8000\/daycares ()({name,address,low_delay,medium_delay,absence})",
+							"id": "25",
+							"uri": "http://api:8000/invitations",
+							"nodeName": "http:\/\/api:8000\/invitations ()({daycare_id,role_id,position_id,name,lastname,is_active})",
 							"method": "POST",
 							"param": "",
 							"attack": "",
 							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "27",
+							"uri": "http://api:8000/invitations/redeem",
+							"nodeName": "http:\/\/api:8000\/invitations\/redeem ()({code,email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "422",
 							"otherinfo": ""
 						}
 					],
@@ -1556,7 +1544,7 @@
 					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
 					"cweid": "524",
 					"wascid": "13",
-					"sourceid": "23"
+					"sourceid": "13"
 				},
 				{
 					"pluginid": "10049",
@@ -1569,7 +1557,7 @@
 					"desc": "<p>The response contents are storable by caching components such as proxy servers, and may be retrieved directly from the cache, rather than from the origin server by the caching servers, in response to similar requests from other users. If the response data is sensitive, personal or user-specific, this may result in sensitive information being leaked. In some cases, this may even result in a user gaining complete control of the session of another user, depending on the configuration of the caching components in use in their environment. This is primarily an issue where \"shared\" caching servers such as \"proxy\" caches are configured on the local network. This configuration is typically found in corporate or educational environments, for instance.</p>",
 					"instances":[ 
 						{
-							"id": "59",
+							"id": "1",
 							"uri": "http://api:8000/",
 							"nodeName": "http:\/\/api:8000\/",
 							"method": "GET",
@@ -1579,7 +1567,7 @@
 							"otherinfo": "In the absence of an explicitly specified caching lifetime directive in the response, a liberal lifetime heuristic of 1 year was assumed. This is permitted by rfc7234."
 						},
 						{
-							"id": "42",
+							"id": "0",
 							"uri": "http://api:8000/health/db",
 							"nodeName": "http:\/\/api:8000\/health\/db",
 							"method": "GET",
@@ -1589,7 +1577,7 @@
 							"otherinfo": "In the absence of an explicitly specified caching lifetime directive in the response, a liberal lifetime heuristic of 1 year was assumed. This is permitted by rfc7234."
 						},
 						{
-							"id": "58",
+							"id": "21",
 							"uri": "http://api:8000/health/endpoints",
 							"nodeName": "http:\/\/api:8000\/health\/endpoints",
 							"method": "GET",
@@ -1606,7 +1594,7 @@
 					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
 					"cweid": "524",
 					"wascid": "13",
-					"sourceid": "3"
+					"sourceid": "1"
 				}
 			]
 		}
