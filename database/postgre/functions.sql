@@ -197,11 +197,14 @@ LANGUAGE plpgsql AS $$
 DECLARE
     v_alphabet CONSTANT TEXT := 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
     v_code TEXT;
+    v_bytes BYTEA;
 BEGIN
     FOR i IN 1..5 LOOP
+        -- gen_random_bytes() (pgcrypto) generates cryptographically secure, unpredictable random data
+        v_bytes := gen_random_bytes(6);
         v_code := '';
-        FOR j IN 1..6 LOOP
-            v_code := v_code || substr(v_alphabet, 1 + floor(random() * length(v_alphabet))::INT, 1);
+        FOR j IN 0..5 LOOP
+            v_code := v_code || substr(v_alphabet, 1 + (get_byte(v_bytes, j) % length(v_alphabet)), 1);
         END LOOP;
 
         INSERT INTO invitation_code (daycare_id, role_id, position_id, name, lastname, is_active, expires_at, code)
