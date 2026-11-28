@@ -1,8 +1,7 @@
 from fastapi import FastAPI, Request
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from routers import ALL_ROUTERS
-
-from prometheus_fastapi_instrumentator import Instrumentator    
 
 app = FastAPI(title="Sonrisas de Cristal API")
 
