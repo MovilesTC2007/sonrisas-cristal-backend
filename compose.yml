@@ -27,7 +27,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-
+    networks:
+      - sonrisas-network
   api:
     build: ./api
     environment:
@@ -46,7 +47,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
-  
+    networks:
+      - sonrisas-network
+
   zap:
     image: ghcr.io/zaproxy/zaproxy:stable
     profiles: ["security"] # starts when its called
@@ -70,7 +73,8 @@ services:
       -t http://api:8000/openapi.json
       -f openapi
       -r report.html
-
+    networks:
+      - sonrisas-network
     # baseline (passive) or full (active attacks) zap-full-scan.py
     # api-scan active attacks on every endpoint in the spec
     # docker compose --profile security run --rm zap
@@ -102,6 +106,8 @@ services:
       - ./nginx/conf:/etc/nginx/conf.d:ro
     depends_on:
       - api
+    networks:
+      - sonrisas-network
 
   cloudflared:
     image: cloudflare/cloudflared:2026.11.2
@@ -119,9 +125,58 @@ services:
       - /tmp:rw,noexec,nosuid,size=16m
     depends_on:
       - nginx-tls
+    networks:
+      - sonrisas-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    depends_on:
+      - api
+      - postgres-exporter
+    networks:
+      - sonrisas-network
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    environment:
+      DATA_SOURCE_USER: ${POSTGRES_USER}
+      DATA_SOURCE_PASS: ${POSTGRES_PASSWORD}
+    command:
+      - "--datasource.uri=db:5432/${POSTGRES_DB}?sslmode=disable"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - sonrisas-network
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - sonrisas-network
 
 volumes:
   postgres_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  sonrisas-network:
+    driver: bridge
 
 secrets:
   password_pepper:
