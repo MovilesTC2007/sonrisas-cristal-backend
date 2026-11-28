@@ -5,11 +5,17 @@ on:
     branches: ["**"]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  test:
-    runs-on: self-hosted
+  db:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       
       - name: Create .env from .env.example
         run: cp .env.example .env
@@ -19,18 +25,19 @@ jobs:
           mkdir -p secrets
           openssl rand -base64 32 > secrets/password_pepper
 
-      - name: Raise the docker compose 
-        run: docker compose down -v && docker compose build --no-cache db && docker compose up -d db
+      # sin estimaciones con sleep 3 --wait bloque ejecucion hasta recibir healthcheck
+      - name: Build and start the database
+        run: docker compose build db && docker compose up -d --wait db
 
+      # se ejecuta pg_isready con las variablespropias del contenedor y no con las del entorno
       - name: Test the database connection
-        run: |
-          sleep 3
-          docker compose exec -T db pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" | tee -a $GITHUB_STEP_SUMMARY
+        run: docker compose exec -T db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"' | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Show database logs on failure
+        if: failure()
+        run: docker compose logs db
 
       - name: Cleanup
         if: always()
         run: docker compose down -v
-
-      - name: Remove pepper secret
-        if: always()
-        run: rm -f secrets/password_pepper
+        

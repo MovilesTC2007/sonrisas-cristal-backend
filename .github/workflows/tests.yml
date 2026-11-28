@@ -5,19 +5,25 @@ on:
     branches: ["**"]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: api
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with: 
+          persist-credentials: false
 
-      - name: Ensure uv is available
-        run: |
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          command -v uv || curl -LsSf https://astral.sh/uv/install.sh | sh
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d
+        with:
+          version: "0.13.10"
+          checksum: "bf65ac1a0af10f92c522d91ac096c7c0a39657647b155577e7836c2cbbb4526c"
 
       - name: Install the pinned Python (see .python-version)
         run: uv python install
